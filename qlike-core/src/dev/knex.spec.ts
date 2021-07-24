@@ -1,21 +1,23 @@
-import test from 'ava';
+import test, { ExecutionContext } from 'ava';
 // const { knex } = require('knex');
 import { Knex, knex } from 'knex';
 
-const config: Knex.Config = {
-  debug: true,
-  client: 'sqlite3',
-  useNullAsDefault: true,
-};
+import { SELECT, tableJoin } from '../lib/sqlike';
+
+import { accountsTable, expectAsKnexQuery, k, usersTable } from './test-utils';
 
 test('users accounts join 1', (t) => {
-  const q = knex(config)
-    .select('*')
+  const qlikeQuery = SELECT(
+    tableJoin('RIGHT', usersTable, 'id', accountsTable, 'user_id'),
+    'id',
+    'user_id'
+  );
+
+  // k.max('user_id').as('maxUser')
+  const knexQuery = k
+    .select('id', 'user_id')
     .from('users')
     .rightJoin('accounts', 'users.id', 'accounts.user_id');
-  const str = q.toQuery();
-  t.is(
-    str,
-    'select * from `users` right join `accounts` on `users`.`id` = `accounts`.`user_id`'
-  );
+
+  expectAsKnexQuery(t, qlikeQuery, knexQuery);
 });

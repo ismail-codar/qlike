@@ -1,4 +1,4 @@
-import { ITable, ITableLike, SELECT, tableJoin } from './sqlike';
+import { ITable, SELECT, tableJoin } from '../lib/sqlike';
 
 interface Student {
   id: string;
