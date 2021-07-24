@@ -1,0 +1,3 @@
+# qlike-core
+
+core library
