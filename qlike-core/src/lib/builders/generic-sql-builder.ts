@@ -1,17 +1,6 @@
-import * as ts from 'typescript';
-
-import {
-  AllWhereType,
-  DbType,
-  FieldType,
-  IFieldLike,
-  ITableLike,
-  SELECT,
-} from '../sqlike';
-
-import { isJoin, isTable } from './builder-check';
-
-ts.isAccessor(null);
+import { SELECT, DbType } from '../sqlike';
+import { isTable, isJoin } from './builder-check';
+import { fieldFullString, tableString, whereString } from './sql-builder-utils';
 
 export const selectQueryToString = (
   query: ReturnType<typeof SELECT>,
@@ -34,88 +23,25 @@ export const selectQueryToString = (
     : isJoin(queryMeta.from)
     ? queryMeta.from.left.tableName
     : '';
-  str += tableStr(fromTable);
+  str += tableString(fromTable);
   // join
   if (isJoin(queryMeta.from)) {
-    str += ` ${queryMeta.from.joinType.toLowerCase()} join ${tableStr(
+    str += ` ${queryMeta.from.joinType.toLowerCase()} join ${tableString(
       queryMeta.from.right.tableName
-    )} on ${fieldFullStr(
+    )} on ${fieldFullString(
       queryMeta.from.left.tableName,
       queryMeta.from.leftField
-    )} = ${fieldFullStr(
+    )} = ${fieldFullString(
       queryMeta.from.right.tableName,
       queryMeta.from.rightField
     )}`;
   }
-
   // where
   if (query.meta.where) {
     str += ' where ';
-    const strw = whereStr(query.meta.from, query.meta.where, dbType);
-    str += strw.substr(1, strw.length - 2);
+    const whereStr = whereString(query.meta.from, query.meta.where, dbType);
+    str += whereStr.substr(1, whereStr.length - 2);
   }
 
   return str;
-};
-
-const tableStr = <T>(tableName: string) => {
-  let str = '`';
-  str += tableName;
-  str += '`';
-  return str;
-};
-
-const fieldFullStr = <T>(tableName: string, fieldName: string) => {
-  let str = '`';
-  str += tableName;
-  str += '`.`';
-  str += fieldName;
-  str += '`';
-  return str;
-};
-
-export const whereStr = (
-  from: ITableLike<unknown>,
-  where: AllWhereType<string>,
-  dbType: DbType
-) => {
-  let str = '';
-  const [fld, op, val, not] = where;
-
-  if (not) {
-    str += 'not ';
-  }
-
-  let leftStr = '';
-  let rightStr = '';
-
-  if (typeof val === 'object') {
-    leftStr += whereStr(from, fld as AllWhereType<string>, dbType);
-  } else {
-    leftStr += '`';
-    leftStr += fld;
-    leftStr += '`';
-  }
-
-  if (typeof val === 'object') {
-    rightStr = whereStr(from, val as AllWhereType<string>, dbType);
-  } else {
-    const fieldType = from.fields[fld as string].type;
-    rightStr = valueStr(val, fieldType, dbType);
-  }
-
-  str += '(';
-  str += leftStr;
-  str += ' ';
-  str += op;
-  str += ' ';
-  str += rightStr;
-  str += ')';
-
-  return str;
-};
-
-const valueStr = (val, fieldType: FieldType, dbType: DbType) => {
-  if (fieldType === 'string') return "'" + val + "'";
-  else return val;
 };
