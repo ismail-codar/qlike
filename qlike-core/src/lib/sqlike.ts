@@ -16,13 +16,14 @@ export interface ITable<T> extends ITableLike<T> {
 
 type ValType = boolean | number | Date | string | IFieldLike<any, any>;
 
-type ConditionWhereType<T> = [
-  left: AllWhereType<T>,
+export type ConditionWhereType<T> = [
+  fld: AllWhereType<T>,
   op: 'AND' | 'OR',
-  right: AllWhereType<T>
+  val: AllWhereType<T>,
+  not?: 'NOT'
 ];
 
-type AttributeWhereType<T> = [
+export type AttributeWhereType<T> = [
   fld: T,
   op:
     | '<>'
@@ -34,25 +35,28 @@ type AttributeWhereType<T> = [
     | 'startsWith'
     | 'endsWith'
     | 'contains',
-  val: ValType
+  val: ValType,
+  not?: 'NOT'
 ];
 
-type InWhereType<T> = [
+export type InWhereType<T> = [
   fld: T,
-  op: 'in' | 'not_in',
+  op: 'in',
   // TODO val: ReturnType<typeof SELECT> | ValType[]
-  val: ValType[]
+  val: ValType[],
+  not?: 'NOT'
 ];
 
-type IsWhereType<T> = [fld: T, op: 'is' | 'not_is', val: 'NULL'];
+export type IsWhereType<T> = [fld: T, op: 'is', val: 'NULL', not?: 'NOT'];
 
-type BetweenWhereType<T> = [
+export type BetweenWhereType<T> = [
   fld: T,
   op: 'between',
-  val: [v1: ValType, v2: ValType]
+  val: [v1: ValType, v2: ValType],
+  not?: 'NOT'
 ];
 
-type AllWhereType<T> =
+export type AllWhereType<T> =
   | AttributeWhereType<T>
   | InWhereType<T>
   | IsWhereType<T>
@@ -117,11 +121,11 @@ export const SELECT = <T, FieldsType extends keyof T>(
       ret.meta.distinct = true;
       return ret;
     },
-    where: (where: AllWhereType<FieldsType>) => {
+    where: (where: AllWhereType<keyof typeof from.fields>) => {
       ret.meta.where = where;
       return ret;
     },
-    groupBy: (...list: FieldsType[]) => {
+    groupBy: (...list: (keyof typeof from.fields)[]) => {
       ret.meta.groupBy = list;
       return ret;
     },

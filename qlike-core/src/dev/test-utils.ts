@@ -1,11 +1,12 @@
 import { knex, Knex } from 'knex';
 
-import { toQueryString } from '../lib/builders/generic-sql-builder';
+import { selectQueryToString } from '../lib/builders/generic-sql-builder';
 import { ITable, SELECT } from '../lib/sqlike';
 
 export interface Users {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
 }
 
 export interface Accounts {
@@ -18,7 +19,8 @@ export const usersTable: ITable<Users> = {
   tableName: 'users',
   fields: {
     id: { fieldName: 'id', type: 'number' },
-    name: { fieldName: 'name', type: 'string' },
+    first_name: { fieldName: 'first_name', type: 'string' },
+    last_name: { fieldName: 'last_name', type: 'string' },
   },
 };
 
@@ -43,7 +45,15 @@ export const expectAsKnexQuery = (
   knexQuery
 ) => {
   const knexQuertyStr = knexQuery.toQuery();
-  const qlikeQueryStr = toQueryString(qlikeQuery);
+  const qlikeQueryStr = selectQueryToString(qlikeQuery);
   return t.is(knexQuertyStr, qlikeQueryStr);
-  // 'select `id`, `user_id` from `users` right join `accounts` on `users`.`id` = `accounts`.`user_id`'
+};
+
+export const expectAsQueryString = (
+  t: any,
+  qlikeQuery: ReturnType<typeof SELECT>,
+  queryString
+) => {
+  const qlikeQueryStr = selectQueryToString(qlikeQuery);
+  return t.is(queryString, qlikeQueryStr);
 };
