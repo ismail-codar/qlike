@@ -2,6 +2,7 @@ import * as ts from 'typescript';
 
 import {
   AllWhereType,
+  DbType,
   FieldType,
   IFieldLike,
   ITableLike,
@@ -12,7 +13,10 @@ import { isJoin, isTable } from './builder-check';
 
 ts.isAccessor(null);
 
-export const selectQueryToString = (query: ReturnType<typeof SELECT>) => {
+export const selectQueryToString = (
+  query: ReturnType<typeof SELECT>,
+  dbType: DbType
+) => {
   const queryMeta = query.meta;
   let str = 'select';
   // fields
@@ -47,7 +51,7 @@ export const selectQueryToString = (query: ReturnType<typeof SELECT>) => {
   // where
   if (query.meta.where) {
     str += ' where ';
-    const strw = whereStr(query.meta.from, query.meta.where);
+    const strw = whereStr(query.meta.from, query.meta.where, dbType);
     str += strw.substr(1, strw.length - 2);
   }
 
@@ -72,7 +76,8 @@ const fieldFullStr = <T>(tableName: string, fieldName: string) => {
 
 export const whereStr = (
   from: ITableLike<unknown>,
-  where: AllWhereType<string>
+  where: AllWhereType<string>,
+  dbType: DbType
 ) => {
   let str = '';
   const [fld, op, val, not] = where;
@@ -85,7 +90,7 @@ export const whereStr = (
   let rightStr = '';
 
   if (typeof val === 'object') {
-    leftStr += whereStr(from, fld as AllWhereType<string>);
+    leftStr += whereStr(from, fld as AllWhereType<string>, dbType);
   } else {
     leftStr += '`';
     leftStr += fld;
@@ -93,10 +98,10 @@ export const whereStr = (
   }
 
   if (typeof val === 'object') {
-    rightStr = whereStr(from, val as AllWhereType<string>);
+    rightStr = whereStr(from, val as AllWhereType<string>, dbType);
   } else {
     const fieldType = from.fields[fld as string].type;
-    rightStr = valueStr(val, fieldType);
+    rightStr = valueStr(val, fieldType, dbType);
   }
 
   str += '(';
@@ -110,7 +115,7 @@ export const whereStr = (
   return str;
 };
 
-const valueStr = (val, fieldType: FieldType) => {
+const valueStr = (val, fieldType: FieldType, dbType: DbType) => {
   if (fieldType === 'string') return "'" + val + "'";
   else return val;
 };

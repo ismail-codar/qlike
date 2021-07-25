@@ -1,3 +1,4 @@
+export type DbType = 'sqlite3' | 'pg' | 'mysql' | 'oracle' | 'sqlserver';
 export type FieldType = 'string' | 'number' | 'date' | 'time' | 'boolean';
 
 export interface IFieldLike<N, T extends FieldType> {

@@ -1,7 +1,7 @@
 import { knex, Knex } from 'knex';
 
 import { selectQueryToString } from '../lib/builders/generic-sql-builder';
-import { ITable, SELECT } from '../lib/sqlike';
+import { DbType, ITable, SELECT } from '../lib/sqlike';
 
 export interface Users {
   id: number;
@@ -33,9 +33,11 @@ export const accountsTable: ITable<Accounts> = {
   },
 };
 
+const dbType: DbType = 'sqlite3';
+
 export const k = knex({
   debug: true,
-  client: 'sqlite3',
+  client: dbType,
   useNullAsDefault: true,
 });
 
@@ -45,7 +47,7 @@ export const expectAsKnexQuery = (
   knexQuery
 ) => {
   const knexQuertyStr = knexQuery.toQuery();
-  const qlikeQueryStr = selectQueryToString(qlikeQuery);
+  const qlikeQueryStr = selectQueryToString(qlikeQuery, dbType);
   return t.is(knexQuertyStr, qlikeQueryStr);
 };
 
@@ -54,6 +56,6 @@ export const expectAsQueryString = (
   qlikeQuery: ReturnType<typeof SELECT>,
   queryString
 ) => {
-  const qlikeQueryStr = selectQueryToString(qlikeQuery);
+  const qlikeQueryStr = selectQueryToString(qlikeQuery, dbType);
   return t.is(queryString, qlikeQueryStr);
 };
