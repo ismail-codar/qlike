@@ -1,6 +1,6 @@
 import { knex, Knex } from 'knex';
-import { isSelectQuery } from '../lib/builders/builder-check';
 
+import { isSelectQuery } from '../lib/builders/builder-check';
 import {
   insertQueryToString,
   selectQueryToString,

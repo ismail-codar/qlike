@@ -2,13 +2,13 @@ import {
   AllWhereType,
   BetweenWhereType,
   ConditionWhereType,
+  INSERT,
   InWhereType,
   IsWhereType,
   ITable,
   ITableLike,
-  tableJoin,
   SELECT,
-  INSERT,
+  tableJoin,
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
@@ -47,13 +47,13 @@ export const isConditionWhereType = <T>(
 };
 
 export const isSelectQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT>
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | {} | []
 ): query is ReturnType<typeof SELECT> => {
-  return !!query.meta['from'];
+  return !!query?.['meta']?.from;
 };
 
 export const isInsertQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT>
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | {} | []
 ): query is ReturnType<typeof INSERT> => {
-  return !!query.meta['into'];
+  return !!query?.['meta']?.into;
 };

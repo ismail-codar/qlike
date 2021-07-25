@@ -4,8 +4,8 @@ import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
   tableString,
-  whereString,
   valueString,
+  whereString,
 } from './sql-builder-utils';
 
 export const selectQueryToString = (
@@ -57,20 +57,32 @@ export const insertQueryToString = (
   dbType: DbType
 ) => {
   const queryMeta = query.meta;
+  const fieldNames = Array.isArray(query.meta.values)
+    ? Object.keys(query.meta.values[0])
+    : Object.keys(query.meta.values);
   let str = 'insert  into ';
   str += tableString(queryMeta.into.tableName);
-  str += '(';
-  str += Object.keys(queryMeta.values).join(', ');
-  str += ')';
-  if (isSelectQuery(queryMeta.values as any)) {
-    // TODO isSelectQuery INSERT
+  str += ' (`';
+  str += fieldNames.join('`, `');
+  str += '`) ';
+  if (isSelectQuery(queryMeta.values)) {
+    str += selectQueryToString(queryMeta.values, dbType);
   } else {
     const values = Array.isArray(query.meta.values)
       ? query.meta.values
       : [query.meta.values];
-    const fieldType: FieldType = null;
+    str += 'values ';
     str += values
-      .map((item) => valueString(item, fieldType, dbType))
+      .map((item) => {
+        return (
+          '(' +
+          fieldNames.map((fieldKey) => {
+            const fieldType = query.meta.into.fields[fieldKey].type;
+            return valueString(item[fieldKey], fieldType, dbType);
+          }) +
+          ')'
+        );
+      })
       .join(',\n');
   }
 

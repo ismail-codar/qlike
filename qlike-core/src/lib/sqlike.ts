@@ -147,8 +147,8 @@ export const SELECT = <T, FieldsType extends keyof T>(
 export const INSERT = <T, FieldsType extends keyof T>(
   into: ITable<T>,
   values:
-    | { [ken in keyof typeof into.fields]?: any }
-    | { [ken in keyof typeof into.fields]?: any }[]
+    | { [key in keyof typeof into.fields]?: any }
+    | { [key in keyof typeof into.fields]?: any }[]
     | ReturnType<typeof SELECT>
 ) => {
   const ret = {

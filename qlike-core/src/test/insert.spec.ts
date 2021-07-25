@@ -4,10 +4,12 @@ import { INSERT } from '../lib/sqlike';
 import { expectAsQueryString, k, usersTable } from '../utils/test-utils';
 
 test('insert simple 1', (t) => {
-  const qlikeQuery = INSERT(usersTable, {
-    first_name: 'ismail',
-    last_name: 'codar',
-  });
+  const qlikeQuery = INSERT(usersTable, [
+    {
+      first_name: 'ismail',
+      last_name: 'codar',
+    },
+  ]);
   expectAsQueryString(
     t,
     qlikeQuery,
