@@ -1,7 +1,6 @@
-export interface IFieldLike<
-  N,
-  T extends 'string' | 'number' | 'date' | 'time' | 'boolean'
-> {
+export type FieldType = 'string' | 'number' | 'date' | 'time' | 'boolean';
+
+export interface IFieldLike<N, T extends FieldType> {
   fieldName: N;
   type: T;
 }

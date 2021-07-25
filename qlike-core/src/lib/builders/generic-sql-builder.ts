@@ -1,15 +1,14 @@
 import * as ts from 'typescript';
 
-import { AllWhereType, IFieldLike, ITableLike, SELECT } from '../sqlike';
-
 import {
-  isBetweenWhereType,
-  isConditionWhereType,
-  isInWhereType,
-  isIsWhereType,
-  isJoin,
-  isTable,
-} from './builder-check';
+  AllWhereType,
+  FieldType,
+  IFieldLike,
+  ITableLike,
+  SELECT,
+} from '../sqlike';
+
+import { isJoin, isTable } from './builder-check';
 
 ts.isAccessor(null);
 
@@ -48,8 +47,8 @@ export const selectQueryToString = (query: ReturnType<typeof SELECT>) => {
   // where
   if (query.meta.where) {
     str += ' where ';
-    const strWhere = whereStr(query.meta.from, query.meta.where);
-    str += strWhere.substr(1, strWhere.length - 2);
+    const strw = whereStr(query.meta.from, query.meta.where);
+    str += strw.substr(1, strw.length - 2);
   }
 
   return str;
@@ -76,9 +75,8 @@ export const whereStr = (
   where: AllWhereType<string>
 ) => {
   let str = '';
-  // isAttributeWhereType,
-  // `first_name` = 'Test'
   const [fld, op, val, not] = where;
+
   if (not) {
     str += 'not ';
   }
@@ -86,12 +84,12 @@ export const whereStr = (
   let leftStr = '';
   let rightStr = '';
 
-  if (typeof fld === 'string') {
+  if (typeof val === 'object') {
+    leftStr += whereStr(from, fld as AllWhereType<string>);
+  } else {
     leftStr += '`';
     leftStr += fld;
     leftStr += '`';
-  } else {
-    leftStr += whereStr(from, fld as AllWhereType<string>);
   }
 
   if (typeof val === 'object') {
@@ -109,23 +107,10 @@ export const whereStr = (
   str += rightStr;
   str += ')';
 
-  // if (isInWhereType(where)) {
-  //   const [fld, op, val] = where;
-  // } else if (isIsWhereType(where)) {
-  //   const [fld, op, val] = where;
-  // } else if (isBetweenWhereType(where)) {
-  //   const [fld, op, val] = where;
-  // } else if (isConditionWhereType(where)) {
-  //   const [fld, op, val] = where;
-  // }
-
   return str;
 };
 
-const valueStr = (
-  val,
-  fieldType: 'string' | 'number' | 'date' | 'time' | 'boolean'
-) => {
+const valueStr = (val, fieldType: FieldType) => {
   if (fieldType === 'string') return "'" + val + "'";
   else return val;
 };
