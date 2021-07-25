@@ -1,13 +1,14 @@
 import * as ts from 'typescript';
 
-import { SELECT, AllWhereType } from '../sqlike';
+import { AllWhereType, IFieldLike, ITableLike, SELECT } from '../sqlike';
+
 import {
-  isTable,
-  isJoin,
   isBetweenWhereType,
   isConditionWhereType,
   isInWhereType,
   isIsWhereType,
+  isJoin,
+  isTable,
 } from './builder-check';
 
 ts.isAccessor(null);
@@ -46,7 +47,9 @@ export const selectQueryToString = (query: ReturnType<typeof SELECT>) => {
 
   // where
   if (query.meta.where) {
-    str += whereStr(query.meta.where);
+    str += ' where ';
+    const strWhere = whereStr(query.meta.from, query.meta.where);
+    str += strWhere.substr(1, strWhere.length - 2);
   }
 
   return str;
@@ -68,34 +71,61 @@ const fieldFullStr = <T>(tableName: string, fieldName: string) => {
   return str;
 };
 
-export const whereStr = <T>(where: AllWhereType<T>) => {
+export const whereStr = (
+  from: ITableLike<unknown>,
+  where: AllWhereType<string>
+) => {
   let str = '';
-
   // isAttributeWhereType,
   // `first_name` = 'Test'
   const [fld, op, val, not] = where;
   if (not) {
     str += 'not ';
   }
-  str += '`';
-  str += fld;
-  str += '` ';
+
+  let leftStr = '';
+  let rightStr = '';
+
+  if (typeof fld === 'string') {
+    leftStr += '`';
+    leftStr += fld;
+    leftStr += '`';
+  } else {
+    leftStr += whereStr(from, fld as AllWhereType<string>);
+  }
+
+  if (typeof val === 'object') {
+    rightStr = whereStr(from, val as AllWhereType<string>);
+  } else {
+    const fieldType = from.fields[fld as string].type;
+    rightStr = valueStr(val, fieldType);
+  }
+
+  str += '(';
+  str += leftStr;
+  str += ' ';
   str += op;
   str += ' ';
-  str += valueStr(val);
+  str += rightStr;
+  str += ')';
 
-  if (isInWhereType(where)) {
-    const [fld, op, val] = where;
-  } else if (isIsWhereType(where)) {
-    const [fld, op, val] = where;
-  } else if (isBetweenWhereType(where)) {
-    const [fld, op, val] = where;
-  } else if (isConditionWhereType(where)) {
-    const [fld, op, val] = where;
-  }
+  // if (isInWhereType(where)) {
+  //   const [fld, op, val] = where;
+  // } else if (isIsWhereType(where)) {
+  //   const [fld, op, val] = where;
+  // } else if (isBetweenWhereType(where)) {
+  //   const [fld, op, val] = where;
+  // } else if (isConditionWhereType(where)) {
+  //   const [fld, op, val] = where;
+  // }
+
   return str;
 };
 
-const valueStr = (val) => {
-  return val;
+const valueStr = (
+  val,
+  fieldType: 'string' | 'number' | 'date' | 'time' | 'boolean'
+) => {
+  if (fieldType === 'string') return "'" + val + "'";
+  else return val;
 };

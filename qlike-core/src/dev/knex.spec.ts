@@ -14,7 +14,7 @@ import {
 
 test('users accounts join 1', (t) => {
   const qlikeQuery = SELECT(
-    tableJoin('RIGHT', usersTable, 'id', accountsTable, 'user_id'),
+    tableJoin('right', usersTable, 'id', accountsTable, 'user_id'),
     'id',
     'user_id'
   );
@@ -26,18 +26,18 @@ test('users accounts join 1', (t) => {
     .rightJoin('accounts', 'users.id', 'accounts.user_id');
 
   expectAsKnexQuery(t, qlikeQuery, knexQuery);
+});
 
-  test('where 1', (t) => {
-    const qlikeQuery = SELECT(usersTable, 'id').where([
-      ['first_name', '=', 'Test'],
-      'AND',
-      ['last_name', '=', 'User'],
-    ]);
+test('where 1', (t) => {
+  const qlikeQuery = SELECT(usersTable, 'id').where([
+    ['first_name', '=', 'Test'],
+    'and',
+    ['last_name', '=', 'User'],
+  ]);
 
-    expectAsQueryString(
-      t,
-      qlikeQuery,
-      "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User')"
-    );
-  });
+  expectAsQueryString(
+    t,
+    qlikeQuery,
+    "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User')"
+  );
 });

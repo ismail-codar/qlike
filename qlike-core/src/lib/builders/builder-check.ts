@@ -1,12 +1,12 @@
 import {
-  ITableLike,
-  ITable,
-  tableJoin,
   AllWhereType,
   BetweenWhereType,
   ConditionWhereType,
   InWhereType,
   IsWhereType,
+  ITable,
+  ITableLike,
+  tableJoin,
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
@@ -41,5 +41,5 @@ export const isBetweenWhereType = <T>(
 export const isConditionWhereType = <T>(
   where: AllWhereType<T>
 ): where is ConditionWhereType<T> => {
-  return where[1] === 'AND' || where[1] === 'OR';
+  return where[1] === 'and' || where[1] === 'or';
 };

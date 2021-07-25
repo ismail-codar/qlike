@@ -18,7 +18,7 @@ type ValType = boolean | number | Date | string | IFieldLike<any, any>;
 
 export type ConditionWhereType<T> = [
   fld: AllWhereType<T>,
-  op: 'AND' | 'OR',
+  op: 'and' | 'or',
   val: AllWhereType<T>,
   not?: 'NOT'
 ];
@@ -47,7 +47,7 @@ export type InWhereType<T> = [
   not?: 'NOT'
 ];
 
-export type IsWhereType<T> = [fld: T, op: 'is', val: 'NULL', not?: 'NOT'];
+export type IsWhereType<T> = [fld: T, op: 'is', val: 'null', not?: 'NOT'];
 
 export type BetweenWhereType<T> = [
   fld: T,
@@ -64,7 +64,7 @@ export type AllWhereType<T> =
   | ConditionWhereType<T>;
 
 export const tableJoin = <L, R>(
-  joinType: 'INNER' | 'LEFT' | 'RIGHT' | 'FULL',
+  joinType: 'inner' | 'left' | 'right' | 'full',
   leftTable: ITable<L>,
   leftField: keyof typeof leftTable.fields,
   rightTable: ITable<R>,
