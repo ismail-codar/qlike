@@ -7,6 +7,8 @@ import {
   ITable,
   ITableLike,
   tableJoin,
+  SELECT,
+  INSERT,
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
@@ -42,4 +44,16 @@ export const isConditionWhereType = <T>(
   where: AllWhereType<T>
 ): where is ConditionWhereType<T> => {
   return where[1] === 'and' || where[1] === 'or';
+};
+
+export const isSelectQuery = <T>(
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT>
+): query is ReturnType<typeof SELECT> => {
+  return !!query.meta['from'];
+};
+
+export const isInsertQuery = <T>(
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT>
+): query is ReturnType<typeof INSERT> => {
+  return !!query.meta['into'];
 };

@@ -140,3 +140,30 @@ export const SELECT = <T, FieldsType extends keyof T>(
   };
   return ret;
 };
+
+// https://dev.mysql.com/doc/refman/8.0/en/insert.html
+// https://www.sqlite.org/lang_insert.html
+//  https://www.techonthenet.com/sqlite/insert.php
+export const INSERT = <T, FieldsType extends keyof T>(
+  into: ITable<T>,
+  values:
+    | { [ken in keyof typeof into.fields]?: any }
+    | { [ken in keyof typeof into.fields]?: any }[]
+    | ReturnType<typeof SELECT>
+) => {
+  const ret = {
+    meta: {
+      into,
+      values,
+    },
+    toJSON: () => ({
+      ...ret.meta,
+      ...{
+        from: into,
+        values: values,
+      },
+    }),
+    toString: () => JSON.stringify(ret.toJSON(), null, 1),
+  };
+  return ret;
+};

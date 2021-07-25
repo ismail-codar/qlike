@@ -57,7 +57,7 @@ export const whereString = (
   return str;
 };
 
-const valueString = (val, fieldType: FieldType, dbType: DbType) => {
+export const valueString = (val, fieldType: FieldType, dbType: DbType) => {
   if (fieldType === 'string') return "'" + val + "'";
   else return val;
 };

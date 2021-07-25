@@ -1,7 +1,11 @@
 import { knex, Knex } from 'knex';
+import { isSelectQuery } from '../lib/builders/builder-check';
 
-import { selectQueryToString } from '../lib/builders/generic-sql-builder';
-import { DbType, ITable, SELECT } from '../lib/sqlike';
+import {
+  insertQueryToString,
+  selectQueryToString,
+} from '../lib/builders/generic-sql-builder';
+import { DbType, INSERT, ITable, SELECT } from '../lib/sqlike';
 
 export interface Users {
   id: number;
@@ -53,9 +57,11 @@ export const expectAsKnexQuery = (
 
 export const expectAsQueryString = (
   t: any,
-  qlikeQuery: ReturnType<typeof SELECT>,
+  qlikeQuery: ReturnType<typeof SELECT> | ReturnType<typeof INSERT>,
   queryString
 ) => {
-  const qlikeQueryStr = selectQueryToString(qlikeQuery, dbType);
+  const qlikeQueryStr = isSelectQuery(qlikeQuery)
+    ? selectQueryToString(qlikeQuery, dbType)
+    : insertQueryToString(qlikeQuery, dbType);
   return t.is(queryString, qlikeQueryStr);
 };

@@ -1,6 +1,12 @@
-import { SELECT, DbType } from '../sqlike';
-import { isTable, isJoin } from './builder-check';
-import { fieldFullString, tableString, whereString } from './sql-builder-utils';
+import { DbType, FieldType, INSERT, SELECT } from '../sqlike';
+
+import { isJoin, isSelectQuery, isTable } from './builder-check';
+import {
+  fieldFullString,
+  tableString,
+  whereString,
+  valueString,
+} from './sql-builder-utils';
 
 export const selectQueryToString = (
   query: ReturnType<typeof SELECT>,
@@ -41,6 +47,31 @@ export const selectQueryToString = (
     str += ' where ';
     const whereStr = whereString(query.meta.from, query.meta.where, dbType);
     str += whereStr.substr(1, whereStr.length - 2);
+  }
+
+  return str;
+};
+
+export const insertQueryToString = (
+  query: ReturnType<typeof INSERT>,
+  dbType: DbType
+) => {
+  const queryMeta = query.meta;
+  let str = 'insert  into ';
+  str += tableString(queryMeta.into.tableName);
+  str += '(';
+  str += Object.keys(queryMeta.values).join(', ');
+  str += ')';
+  if (isSelectQuery(queryMeta.values as any)) {
+    // TODO isSelectQuery INSERT
+  } else {
+    const values = Array.isArray(query.meta.values)
+      ? query.meta.values
+      : [query.meta.values];
+    const fieldType: FieldType = null;
+    str += values
+      .map((item) => valueString(item, fieldType, dbType))
+      .join(',\n');
   }
 
   return str;

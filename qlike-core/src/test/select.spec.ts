@@ -3,14 +3,13 @@ import test, { ExecutionContext } from 'ava';
 import { Knex, knex } from 'knex';
 
 import { SELECT, tableJoin } from '../lib/sqlike';
-
 import {
   accountsTable,
   expectAsKnexQuery,
   expectAsQueryString,
   k,
   usersTable,
-} from './test-utils';
+} from '../utils/test-utils';
 
 test('users accounts join 1', (t) => {
   const qlikeQuery = SELECT(
