@@ -47,13 +47,13 @@ export const isConditionWhereType = <T>(
 };
 
 export const isSelectQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | {} | []
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | any
 ): query is ReturnType<typeof SELECT> => {
   return !!query?.['meta']?.from;
 };
 
 export const isInsertQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | {} | []
+  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | any
 ): query is ReturnType<typeof INSERT> => {
   return !!query?.['meta']?.into;
 };

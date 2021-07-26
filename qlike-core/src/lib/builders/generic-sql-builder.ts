@@ -76,10 +76,12 @@ export const insertQueryToString = (
       .map((item) => {
         return (
           '(' +
-          fieldNames.map((fieldKey) => {
-            const fieldType = query.meta.into.fields[fieldKey].type;
-            return valueString(item[fieldKey], fieldType, dbType);
-          }) +
+          fieldNames
+            .map((fieldKey) => {
+              const fieldType = query.meta.into.fields[fieldKey].type;
+              return valueString(item[fieldKey], fieldType, dbType);
+            })
+            .join(', ') +
           ')'
         );
       })
