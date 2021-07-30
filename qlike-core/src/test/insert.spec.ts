@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from 'ava';
+import test from 'ava';
 
 import { INSERT } from '../lib/sqlike';
 import { expectAsQueryString, k, usersTable } from '../utils/test-utils';
@@ -13,6 +13,6 @@ test('insert simple 1', (t) => {
   expectAsQueryString(
     t,
     qlikeQuery,
-    "insert  into `users` (`first_name`, `last_name`) values ('ismail', 'codar')"
+    "insert into `users` (`first_name`, `last_name`) values ('ismail', 'codar')"
   );
 });

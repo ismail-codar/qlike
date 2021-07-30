@@ -2,6 +2,7 @@ import {
   AllWhereType,
   BetweenWhereType,
   ConditionWhereType,
+  DELETE,
   INSERT,
   InWhereType,
   IsWhereType,
@@ -9,6 +10,7 @@ import {
   ITableLike,
   SELECT,
   tableJoin,
+  UPDATE,
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
@@ -46,14 +48,32 @@ export const isConditionWhereType = <T>(
   return where[1] === 'and' || where[1] === 'or';
 };
 
+export type AllQueryTypes =
+  | ReturnType<typeof SELECT>
+  | ReturnType<typeof INSERT>
+  | ReturnType<typeof UPDATE>
+  | ReturnType<typeof DELETE>;
+
 export const isSelectQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | any
+  query: AllQueryTypes | any
 ): query is ReturnType<typeof SELECT> => {
   return !!query?.['meta']?.from;
 };
 
 export const isInsertQuery = <T>(
-  query: ReturnType<typeof SELECT> | ReturnType<typeof INSERT> | any
+  query: AllQueryTypes | any
 ): query is ReturnType<typeof INSERT> => {
   return !!query?.['meta']?.into;
+};
+
+export const isUpdateQuery = <T>(
+  query: AllQueryTypes | any
+): query is ReturnType<typeof UPDATE> => {
+  return !!query?.['meta']?.updateTable;
+};
+
+export const isDeleteQuery = <T>(
+  query: AllQueryTypes | any
+): query is ReturnType<typeof DELETE> => {
+  return !!query?.['meta']?.deleteTable;
 };

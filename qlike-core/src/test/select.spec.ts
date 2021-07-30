@@ -1,6 +1,4 @@
-import test, { ExecutionContext } from 'ava';
-// const { knex } = require('knex');
-import { Knex, knex } from 'knex';
+import test from 'ava';
 
 import { SELECT, tableJoin } from '../lib/sqlike';
 import {

@@ -103,7 +103,7 @@ export const SELECT = <T, FieldsType extends keyof T>(
     meta: {
       from,
       fields,
-      distinct: undefined,
+      distinct: undefined as boolean,
       where: undefined,
       groupBy: undefined,
       orderBy: undefined,
@@ -156,14 +156,44 @@ export const INSERT = <T, FieldsType extends keyof T>(
       into,
       values,
     },
-    toJSON: () => ({
-      ...ret.meta,
-      ...{
-        from: into,
-        values: values,
-      },
-    }),
+    toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
+  };
+  return ret;
+};
+
+export const UPDATE = <T, FieldsType extends keyof T>(
+  updateTable: ITable<T>
+) => {
+  const ret = {
+    meta: {
+      updateTable,
+      where: undefined,
+    },
+    toJSON: () => ret.meta,
+    toString: () => JSON.stringify(ret.toJSON(), null, 1),
+    where: (where: AllWhereType<keyof typeof updateTable.fields>) => {
+      ret.meta.where = where;
+      return ret;
+    },
+  };
+  return ret;
+};
+
+export const DELETE = <T, FieldsType extends keyof T>(
+  deleteTable: ITable<T>
+) => {
+  const ret = {
+    meta: {
+      deleteTable,
+      where: undefined,
+    },
+    toJSON: () => ret.meta,
+    toString: () => JSON.stringify(ret.toJSON(), null, 1),
+    where: (where: AllWhereType<keyof typeof deleteTable.fields>) => {
+      ret.meta.where = where;
+      return ret;
+    },
   };
   return ret;
 };

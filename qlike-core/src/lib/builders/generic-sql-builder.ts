@@ -1,4 +1,4 @@
-import { DbType, FieldType, INSERT, SELECT } from '../sqlike';
+import { DbType, DELETE, FieldType, INSERT, SELECT, UPDATE } from '../sqlike';
 
 import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
@@ -60,7 +60,7 @@ export const insertQueryToString = (
   const fieldNames = Array.isArray(query.meta.values)
     ? Object.keys(query.meta.values[0])
     : Object.keys(query.meta.values);
-  let str = 'insert  into ';
+  let str = 'insert into ';
   str += tableString(queryMeta.into.tableName);
   str += ' (`';
   str += fieldNames.join('`, `');
@@ -89,4 +89,20 @@ export const insertQueryToString = (
   }
 
   return str;
+};
+
+export const updateQueryToString = (
+  query: ReturnType<typeof UPDATE>,
+  dbType: DbType
+) => {
+  // TODO updateQueryToString
+  return 'updateQueryToString';
+};
+
+export const deleteQueryToString = (
+  query: ReturnType<typeof DELETE>,
+  dbType: DbType
+) => {
+  // TODO deleteQueryToString
+  return 'deleteQueryToString';
 };
