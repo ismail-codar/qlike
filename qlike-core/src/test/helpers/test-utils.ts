@@ -5,14 +5,14 @@ import {
   isInsertQuery,
   isSelectQuery,
   isUpdateQuery,
-} from '../lib/builders/builder-check';
+} from '../../lib/builders/builder-check';
 import {
   deleteQueryToString,
   insertQueryToString,
   selectQueryToString,
   updateQueryToString,
-} from '../lib/builders/generic-sql-builder';
-import { DbType, DELETE, INSERT, ITable, SELECT, UPDATE } from '../lib/sqlike';
+} from '../../lib/builders/generic-sql-builder';
+import { DbType, ITable, SELECT } from '../../lib/sqlike';
 
 export interface Users {
   id: number;

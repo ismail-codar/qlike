@@ -163,11 +163,13 @@ export const INSERT = <T, FieldsType extends keyof T>(
 };
 
 export const UPDATE = <T, FieldsType extends keyof T>(
-  updateTable: ITable<T>
+  updateTable: ITable<T>,
+  set: { [key in keyof typeof updateTable.fields]?: any }
 ) => {
   const ret = {
     meta: {
       updateTable,
+      set,
       where: undefined,
     },
     toJSON: () => ret.meta,

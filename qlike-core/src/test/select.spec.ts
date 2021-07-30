@@ -1,13 +1,14 @@
 import test from 'ava';
 
 import { SELECT, tableJoin } from '../lib/sqlike';
+
 import {
   accountsTable,
   expectAsKnexQuery,
   expectAsQueryString,
   k,
   usersTable,
-} from '../utils/test-utils';
+} from './helpers/test-utils';
 
 test('users accounts join 1', (t) => {
   const qlikeQuery = SELECT(

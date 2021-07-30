@@ -3,6 +3,7 @@ import { DbType, DELETE, FieldType, INSERT, SELECT, UPDATE } from '../sqlike';
 import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
+  fieldString,
   tableString,
   valueString,
   whereString,
@@ -95,14 +96,49 @@ export const updateQueryToString = (
   query: ReturnType<typeof UPDATE>,
   dbType: DbType
 ) => {
-  // TODO updateQueryToString
-  return 'updateQueryToString';
+  const queryMeta = query.meta;
+  let str = 'update ';
+  str += tableString(queryMeta.updateTable.tableName);
+  str += ' set ';
+  str += Object.keys(queryMeta.set)
+    .map((fieldKey) => {
+      const fieldType = queryMeta.updateTable.fields[fieldKey].type;
+      return (
+        fieldString(fieldKey) +
+        ' = ' +
+        valueString(queryMeta.set[fieldKey], fieldType, dbType)
+      );
+    })
+    .join(', ');
+  // where
+  if (query.meta.where) {
+    str += ' where ';
+    const whereStr = whereString(
+      query.meta.updateTable,
+      query.meta.where,
+      dbType
+    );
+    str += whereStr.substr(1, whereStr.length - 2);
+  }
+  return str;
 };
 
 export const deleteQueryToString = (
   query: ReturnType<typeof DELETE>,
   dbType: DbType
 ) => {
-  // TODO deleteQueryToString
-  return 'deleteQueryToString';
+  const queryMeta = query.meta;
+  let str = 'delete from ';
+  str += tableString(queryMeta.deleteTable.tableName);
+  // where
+  if (query.meta.where) {
+    str += ' where ';
+    const whereStr = whereString(
+      query.meta.deleteTable,
+      query.meta.where,
+      dbType
+    );
+    str += whereStr.substr(1, whereStr.length - 2);
+  }
+  return str;
 };

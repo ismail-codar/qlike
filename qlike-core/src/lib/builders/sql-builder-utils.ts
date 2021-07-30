@@ -7,6 +7,13 @@ export const tableString = <T>(tableName: string) => {
   return str;
 };
 
+export const fieldString = <T>(fieldName: string) => {
+  let str = '`';
+  str += fieldName;
+  str += '`';
+  return str;
+};
+
 export const fieldFullString = <T>(tableName: string, fieldName: string) => {
   let str = '`';
   str += tableName;
