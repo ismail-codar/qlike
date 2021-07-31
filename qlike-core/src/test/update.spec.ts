@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { UPDATE } from '../lib/sqlike';
 
-import { expectAsQueryString, k, usersTable } from './helpers/test-utils';
+import { expectAsQueryString, usersTable } from './helpers/test-utils';
 
 test('update simple 1', (t) => {
   const qlikeQuery = UPDATE(usersTable, {

@@ -6,21 +6,21 @@ import {
   ITableLike,
 } from '../sqlike';
 
-export const tableString = <T>(tableName: string) => {
+export const tableString = (tableName: string) => {
   let str = '`';
   str += tableName;
   str += '`';
   return str;
 };
 
-export const fieldString = <T>(fieldName: string) => {
+export const fieldString = (fieldName: string) => {
   let str = '`';
   str += fieldName;
   str += '`';
   return str;
 };
 
-export const fieldFullString = <T>(tableName: string, fieldName: string) => {
+export const fieldFullString = (tableName: string, fieldName: string) => {
   let str = '`';
   str += tableName;
   str += '`.`';
@@ -71,6 +71,6 @@ export const whereString = (
 };
 
 export const valueString = (val, fieldType: FieldType, dbType: DbType) => {
-  if (fieldType.includes('char')) return "'" + val + "'";
+  if (dbType && fieldType.includes('char')) return "'" + val + "'";
   else return val;
 };

@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { INSERT } from '../lib/sqlike';
 
-import { expectAsQueryString, k, usersTable } from './helpers/test-utils';
+import { expectAsQueryString, usersTable } from './helpers/test-utils';
 
 test('insert simple 1', (t) => {
   const qlikeQuery = INSERT(usersTable, [

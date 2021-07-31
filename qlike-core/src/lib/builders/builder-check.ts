@@ -54,25 +54,25 @@ export type AllQueryTypes =
   | ReturnType<typeof UPDATE>
   | ReturnType<typeof DELETE>;
 
-export const isSelectQuery = <T>(
+export const isSelectQuery = (
   query: AllQueryTypes | any
 ): query is ReturnType<typeof SELECT> => {
   return !!query?.['meta']?.from;
 };
 
-export const isInsertQuery = <T>(
+export const isInsertQuery = (
   query: AllQueryTypes | any
 ): query is ReturnType<typeof INSERT> => {
   return !!query?.['meta']?.into;
 };
 
-export const isUpdateQuery = <T>(
+export const isUpdateQuery = (
   query: AllQueryTypes | any
 ): query is ReturnType<typeof UPDATE> => {
   return !!query?.['meta']?.updateTable;
 };
 
-export const isDeleteQuery = <T>(
+export const isDeleteQuery = (
   query: AllQueryTypes | any
 ): query is ReturnType<typeof DELETE> => {
   return !!query?.['meta']?.deleteTable;

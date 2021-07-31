@@ -1,4 +1,4 @@
-import { knex, Knex } from 'knex';
+import { knex } from 'knex';
 
 import { AllQueryTypes } from '../../lib/builders/builder-check';
 import { DbType, ITable, SELECT } from '../../lib/sqlike';

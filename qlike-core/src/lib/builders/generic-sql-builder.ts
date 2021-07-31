@@ -1,13 +1,4 @@
-import {
-  DbType,
-  DELETE,
-  FieldType,
-  IFieldLike,
-  INSERT,
-  ITable,
-  SELECT,
-  UPDATE,
-} from '../sqlike';
+import { DbType, DELETE, IFieldLike, INSERT, SELECT, UPDATE } from '../sqlike';
 
 import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {

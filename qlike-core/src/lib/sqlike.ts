@@ -168,7 +168,7 @@ export const SELECT = <T, FieldsType extends keyof T>(
 // https://dev.mysql.com/doc/refman/8.0/en/insert.html
 // https://www.sqlite.org/lang_insert.html
 //  https://www.techonthenet.com/sqlite/insert.php
-export const INSERT = <T, FieldsType extends keyof T>(
+export const INSERT = <T>(
   into: ITable<T>,
   values:
     | { [key in keyof typeof into.fields]?: any }
@@ -186,7 +186,7 @@ export const INSERT = <T, FieldsType extends keyof T>(
   return ret;
 };
 
-export const UPDATE = <T, FieldsType extends keyof T>(
+export const UPDATE = <T>(
   updateTable: ITable<T>,
   set: { [key in keyof typeof updateTable.fields]?: any }
 ) => {
@@ -206,9 +206,7 @@ export const UPDATE = <T, FieldsType extends keyof T>(
   return ret;
 };
 
-export const DELETE = <T, FieldsType extends keyof T>(
-  deleteTable: ITable<T>
-) => {
+export const DELETE = <T>(deleteTable: ITable<T>) => {
   const ret = {
     meta: {
       deleteTable,
