@@ -1,4 +1,13 @@
-import { DbType, DELETE, FieldType, INSERT, SELECT, UPDATE } from '../sqlike';
+import {
+  DbType,
+  DELETE,
+  FieldType,
+  IFieldLike,
+  INSERT,
+  ITable,
+  SELECT,
+  UPDATE,
+} from '../sqlike';
 
 import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
@@ -79,8 +88,8 @@ export const insertQueryToString = (
           '(' +
           fieldNames
             .map((fieldKey) => {
-              const fieldType = query.meta.into.fields[fieldKey].type;
-              return valueString(item[fieldKey], fieldType, dbType);
+              const field = query.meta.into.fields[fieldKey] as IFieldLike<any>;
+              return valueString(item[fieldKey], field.data_type, dbType);
             })
             .join(', ') +
           ')'
@@ -102,11 +111,11 @@ export const updateQueryToString = (
   str += ' set ';
   str += Object.keys(queryMeta.set)
     .map((fieldKey) => {
-      const fieldType = queryMeta.updateTable.fields[fieldKey].type;
+      const field = queryMeta.updateTable.fields[fieldKey] as IFieldLike<any>;
       return (
         fieldString(fieldKey) +
         ' = ' +
-        valueString(queryMeta.set[fieldKey], fieldType, dbType)
+        valueString(queryMeta.set[fieldKey], field.data_type, dbType)
       );
     })
     .join(', ');

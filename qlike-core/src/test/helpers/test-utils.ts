@@ -29,18 +29,18 @@ export interface Accounts {
 export const usersTable: ITable<Users> = {
   tableName: 'users',
   fields: {
-    id: { fieldName: 'id', type: 'number' },
-    first_name: { fieldName: 'first_name', type: 'string' },
-    last_name: { fieldName: 'last_name', type: 'string' },
+    id: { name: 'id', data_type: 'numeric' },
+    first_name: { name: 'first_name', data_type: 'varchar' },
+    last_name: { name: 'last_name', data_type: 'varchar' },
   },
 };
 
 export const accountsTable: ITable<Accounts> = {
   tableName: 'accounts',
   fields: {
-    id: { fieldName: 'id', type: 'number' },
-    name: { fieldName: 'name', type: 'string' },
-    user_id: { fieldName: 'user_id', type: 'number' },
+    id: { name: 'id', data_type: 'numeric' },
+    name: { name: 'name', data_type: 'varchar' },
+    user_id: { name: 'user_id', data_type: 'numeric' },
   },
 };
 

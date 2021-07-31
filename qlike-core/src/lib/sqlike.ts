@@ -1,20 +1,44 @@
 export type DbType = 'sqlite3' | 'pg' | 'mysql' | 'oracle' | 'sqlserver';
-export type FieldType = 'string' | 'number' | 'date' | 'time' | 'boolean';
+export type FieldType =
+  | 'numeric'
+  | 'varchar'
+  | 'timestamp'
+  | 'smallint'
+  | 'int'
+  | 'char'
+  | 'blobsubtypetext'
+  | 'decimal'
+  | 'blob';
 
-export interface IFieldLike<N, T extends FieldType> {
-  fieldName: N;
-  type: T;
+export interface IFieldLike<N> {
+  name: N;
+  data_type: FieldType;
+  table?: string;
+  default_value?: any | null;
+  max_length?: number | null;
+  numeric_precision?: number | null;
+  numeric_scale?: number | null;
+  is_nullable?: boolean;
+  is_unique?: boolean;
+  is_primary_key?: boolean;
+  is_generated?: boolean;
+  has_auto_increment?: boolean;
+  foreign_key_table?: string | null;
+  foreign_key_column?: string | null;
+  comment?: string | null;
+  schema?: string;
+  foreign_key_schema?: string | null;
 }
 
 export interface ITableLike<T> {
-  fields: { [key in keyof T]: IFieldLike<key, any> };
+  fields: { [key in keyof T]: IFieldLike<key> };
 }
 
 export interface ITable<T> extends ITableLike<T> {
   tableName: string;
 }
 
-type ValType = boolean | number | Date | string | IFieldLike<any, any>;
+type ValType = boolean | number | Date | string | IFieldLike<any>;
 
 export type ConditionWhereType<T> = [
   fld: AllWhereType<T>,

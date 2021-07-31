@@ -1,4 +1,10 @@
-import { AllWhereType, DbType, FieldType, ITableLike } from '../sqlike';
+import {
+  AllWhereType,
+  DbType,
+  FieldType,
+  IFieldLike,
+  ITableLike,
+} from '../sqlike';
 
 export const tableString = <T>(tableName: string) => {
   let str = '`';
@@ -49,8 +55,8 @@ export const whereString = (
   if (typeof val === 'object') {
     rightStr = whereString(from, val as AllWhereType<string>, dbType);
   } else {
-    const fieldType = from.fields[fld as string].type;
-    rightStr = valueString(val, fieldType, dbType);
+    const field = from.fields[fld as string] as IFieldLike<any>;
+    rightStr = valueString(val, field.data_type, dbType);
   }
 
   str += '(';
@@ -65,6 +71,6 @@ export const whereString = (
 };
 
 export const valueString = (val, fieldType: FieldType, dbType: DbType) => {
-  if (fieldType === 'string') return "'" + val + "'";
+  if (fieldType.includes('char')) return "'" + val + "'";
   else return val;
 };
