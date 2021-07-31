@@ -2,12 +2,19 @@ import knex from 'knex';
 import schemaInspector from 'knex-schema-inspector';
 
 const database = knex({
-  client: 'mysql',
+  client: 'sqlite3',
   connection: {
-    host: '127.0.0.1',
-    user: 'your_database_user',
-    password: 'your_database_password',
-    database: 'myapp_test',
-    charset: 'utf8',
+    filename: 'doc/salila-sql/sqlite-sakila-db/sakila.db',
   },
+  useNullAsDefault: true,
+});
+
+const inspector = schemaInspector(database);
+inspector.tables().then((tables) => {
+  console.log(tables);
+  tables.forEach((tableName) => {
+    inspector.columnInfo(tableName).then((columns) => {
+      console.log(columns);
+    });
+  });
 });
