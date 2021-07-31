@@ -1,0 +1,7 @@
+{
+  "client": "sqlite3",
+  "connection": {
+    "filename": "doc/salila-sql/sqlite-sakila-db/sakila.db"
+  },
+  "useNullAsDefault": true
+}

@@ -19,7 +19,7 @@ const getSchema = async (): Promise<ITable<any>[]> => {
 
   for (let i = 0; i < dbTables.length; i++) {
     const tableName = dbTables[i];
-    const table: ITable<any> = { tableName, fields: {} };
+    const table: ITable<any> = { name: tableName, fields: {} };
     const tableColumns = await inspector.columnInfo(tableName);
     tableColumns.forEach((column) => {
       table.fields[column.name] = column as IFieldLike<any>;
@@ -31,15 +31,6 @@ const getSchema = async (): Promise<ITable<any>[]> => {
 };
 
 getSchema().then((schema) => {
-  // console.log(JSON.stringify(schema, null, 1));
-  const typeNames = [];
-  schema.map((table) =>
-    Object.keys(table.fields).map((fldName) => {
-      if (!typeNames.includes(table.fields[fldName].data_type)) {
-        typeNames.push(table.fields[fldName].data_type);
-      }
-    })
-  );
-  console.log(typeNames.join('" | "'));
+  console.log(JSON.stringify(schema, null, 1));
   process.exit();
 });

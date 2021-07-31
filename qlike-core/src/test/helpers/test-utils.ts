@@ -1,18 +1,8 @@
 import { knex, Knex } from 'knex';
 
-import {
-  AllQueryTypes,
-  isInsertQuery,
-  isSelectQuery,
-  isUpdateQuery,
-} from '../../lib/builders/builder-check';
-import {
-  deleteQueryToString,
-  insertQueryToString,
-  selectQueryToString,
-  updateQueryToString,
-} from '../../lib/builders/generic-sql-builder';
+import { AllQueryTypes } from '../../lib/builders/builder-check';
 import { DbType, ITable, SELECT } from '../../lib/sqlike';
+import { queryToString } from '../../utils/query-utils';
 
 export interface Users {
   id: number;
@@ -27,7 +17,7 @@ export interface Accounts {
 }
 
 export const usersTable: ITable<Users> = {
-  tableName: 'users',
+  name: 'users',
   fields: {
     id: { name: 'id', data_type: 'numeric' },
     first_name: { name: 'first_name', data_type: 'varchar' },
@@ -36,7 +26,7 @@ export const usersTable: ITable<Users> = {
 };
 
 export const accountsTable: ITable<Accounts> = {
-  tableName: 'accounts',
+  name: 'accounts',
   fields: {
     id: { name: 'id', data_type: 'numeric' },
     name: { name: 'name', data_type: 'varchar' },
@@ -58,7 +48,7 @@ export const expectAsKnexQuery = (
   knexQuery
 ) => {
   const knexQuertyStr = knexQuery.toQuery();
-  const qlikeQueryStr = selectQueryToString(qlikeQuery, dbType);
+  const qlikeQueryStr = queryToString(qlikeQuery, dbType);
   return t.is(knexQuertyStr, qlikeQueryStr);
 };
 
@@ -67,12 +57,6 @@ export const expectAsQueryString = (
   qlikeQuery: AllQueryTypes,
   queryString
 ) => {
-  const qlikeQueryStr = isSelectQuery(qlikeQuery)
-    ? selectQueryToString(qlikeQuery, dbType)
-    : isInsertQuery(qlikeQuery)
-    ? insertQueryToString(qlikeQuery, dbType)
-    : isUpdateQuery(qlikeQuery)
-    ? updateQueryToString(qlikeQuery, dbType)
-    : deleteQueryToString(qlikeQuery, dbType);
+  const qlikeQueryStr = queryToString(qlikeQuery, dbType);
   return t.is(queryString, qlikeQueryStr);
 };

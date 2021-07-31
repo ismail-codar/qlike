@@ -35,7 +35,7 @@ export interface ITableLike<T> {
 }
 
 export interface ITable<T> extends ITableLike<T> {
-  tableName: string;
+  name: string;
 }
 
 type ValType = boolean | number | Date | string | IFieldLike<any>;
@@ -105,9 +105,9 @@ export const tableJoin = <L, R>(
     toJSON: () => {
       return {
         joinType,
-        leftTable: leftTable.tableName,
+        leftTable: leftTable.name,
         leftField,
-        rightTable: rightTable.tableName,
+        rightTable: rightTable.name,
         rightField,
       };
     },

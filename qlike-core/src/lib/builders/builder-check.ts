@@ -14,7 +14,7 @@ import {
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
-  return !!tbl['tableName'];
+  return !!tbl['name'] && !!tbl['fields'];
 };
 
 export const isJoin = (

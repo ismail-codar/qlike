@@ -35,20 +35,20 @@ export const selectQueryToString = (
   // from
   str += ' from ';
   const fromTable = isTable(queryMeta.from)
-    ? queryMeta.from.tableName
+    ? queryMeta.from.name
     : isJoin(queryMeta.from)
-    ? queryMeta.from.left.tableName
+    ? queryMeta.from.left.name
     : '';
   str += tableString(fromTable);
   // join
   if (isJoin(queryMeta.from)) {
     str += ` ${queryMeta.from.joinType.toLowerCase()} join ${tableString(
-      queryMeta.from.right.tableName
+      queryMeta.from.right.name
     )} on ${fieldFullString(
-      queryMeta.from.left.tableName,
+      queryMeta.from.left.name,
       queryMeta.from.leftField
     )} = ${fieldFullString(
-      queryMeta.from.right.tableName,
+      queryMeta.from.right.name,
       queryMeta.from.rightField
     )}`;
   }
@@ -71,7 +71,7 @@ export const insertQueryToString = (
     ? Object.keys(query.meta.values[0])
     : Object.keys(query.meta.values);
   let str = 'insert into ';
-  str += tableString(queryMeta.into.tableName);
+  str += tableString(queryMeta.into.name);
   str += ' (`';
   str += fieldNames.join('`, `');
   str += '`) ';
@@ -107,7 +107,7 @@ export const updateQueryToString = (
 ) => {
   const queryMeta = query.meta;
   let str = 'update ';
-  str += tableString(queryMeta.updateTable.tableName);
+  str += tableString(queryMeta.updateTable.name);
   str += ' set ';
   str += Object.keys(queryMeta.set)
     .map((fieldKey) => {
@@ -138,7 +138,7 @@ export const deleteQueryToString = (
 ) => {
   const queryMeta = query.meta;
   let str = 'delete from ';
-  str += tableString(queryMeta.deleteTable.tableName);
+  str += tableString(queryMeta.deleteTable.name);
   // where
   if (query.meta.where) {
     str += ' where ';
