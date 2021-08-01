@@ -13,14 +13,17 @@ import {
 } from '../lib/builders/generic-sql-builder';
 import { primitiveValueString } from '../lib/builders/sql-builder-utils';
 
-export const queryToString = (qlikeQuery: AllQueryTypes, dbType: DbType) => {
-  const valueString: ValueStringFn = primitiveValueString;
+export const queryToString = (
+  qlikeQuery: AllQueryTypes,
+  dbType: DbType = 'sqlite3',
+  valueString: ValueStringFn = primitiveValueString
+) => {
   const qlikeQueryStr = isSelectQuery(qlikeQuery)
-    ? selectQueryToString(qlikeQuery, valueString, dbType)
+    ? selectQueryToString(qlikeQuery, dbType, valueString)
     : isInsertQuery(qlikeQuery)
-    ? insertQueryToString(qlikeQuery, valueString, dbType)
+    ? insertQueryToString(qlikeQuery, dbType, valueString)
     : isUpdateQuery(qlikeQuery)
-    ? updateQueryToString(qlikeQuery, valueString, dbType)
-    : deleteQueryToString(qlikeQuery, valueString, dbType);
+    ? updateQueryToString(qlikeQuery, dbType, valueString)
+    : deleteQueryToString(qlikeQuery, dbType, valueString);
   return qlikeQueryStr;
 };

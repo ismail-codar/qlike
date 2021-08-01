@@ -19,8 +19,8 @@ import {
 
 export const selectQueryToString = (
   query: ReturnType<typeof SELECT>,
-  valueString: ValueStringFn = primitiveValueString,
-  dbType: DbType = 'sqlite3'
+  dbType: DbType = 'sqlite3',
+  valueString: ValueStringFn = primitiveValueString
 ) => {
   const queryMeta = query.meta;
   let str = 'select';
@@ -69,8 +69,8 @@ export const selectQueryToString = (
 
 export const insertQueryToString = (
   query: ReturnType<typeof INSERT>,
-  valueString: ValueStringFn,
-  dbType: DbType
+  dbType: DbType,
+  valueString: ValueStringFn
 ) => {
   const queryMeta = query.meta;
   const fieldNames = Array.isArray(query.meta.values)
@@ -82,7 +82,7 @@ export const insertQueryToString = (
   str += fieldNames.join('`, `');
   str += '`) ';
   if (isSelectQuery(queryMeta.values)) {
-    str += selectQueryToString(queryMeta.values, valueString, dbType);
+    str += selectQueryToString(queryMeta.values, dbType, valueString);
   } else {
     const values = Array.isArray(query.meta.values)
       ? query.meta.values
@@ -109,8 +109,8 @@ export const insertQueryToString = (
 
 export const updateQueryToString = (
   query: ReturnType<typeof UPDATE>,
-  valueString: ValueStringFn,
-  dbType: DbType
+  dbType: DbType,
+  valueString: ValueStringFn
 ) => {
   const queryMeta = query.meta;
   let str = 'update ';
@@ -142,8 +142,8 @@ export const updateQueryToString = (
 
 export const deleteQueryToString = (
   query: ReturnType<typeof DELETE>,
-  valueString: ValueStringFn,
-  dbType: DbType
+  dbType: DbType,
+  valueString: ValueStringFn
 ) => {
   const queryMeta = query.meta;
   let str = 'delete from ';
