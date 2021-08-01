@@ -10,7 +10,17 @@ export type FieldType =
   | 'decimal'
   | 'blob';
 
-export type ValueStringFn = (val, fieldType: FieldType, dbType: DbType) => any;
+export interface ParamType {
+  field: IFieldLike<any>;
+  val: any;
+  dbType: DbType;
+}
+
+export type ValueStringFn = (
+  val,
+  field: IFieldLike<any>,
+  dbType: DbType
+) => any;
 
 export interface IFieldLike<N> {
   name: N;

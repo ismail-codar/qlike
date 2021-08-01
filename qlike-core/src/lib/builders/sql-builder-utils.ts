@@ -1,9 +1,9 @@
 import {
   AllWhereType,
   DbType,
-  FieldType,
   IFieldLike,
   ITableLike,
+  ParamType,
   ValueStringFn,
 } from '../sqlike';
 
@@ -68,7 +68,7 @@ export const whereString = (
     );
   } else {
     const field = from.fields[fld as string] as IFieldLike<any>;
-    rightStr = valueString(val, field.data_type, dbType);
+    rightStr = valueString(val, field, dbType);
   }
 
   str += '(';
@@ -84,9 +84,25 @@ export const whereString = (
 
 export const primitiveValueString = (
   val,
-  fieldType: FieldType,
+  field: IFieldLike<any>,
   dbType: DbType
 ) => {
-  if (dbType && fieldType.includes('char')) return "'" + val + "'";
+  if (dbType && field.data_type.includes('char')) return "'" + val + "'";
   else return val;
+};
+
+export const paramValueString = (params: ParamType[]) => {
+  const valueString: ValueStringFn = (
+    val,
+    field: IFieldLike<any>,
+    dbType: DbType
+  ) => {
+    params.push({
+      field,
+      val,
+      dbType,
+    });
+    return '?';
+  };
+  return valueString;
 };

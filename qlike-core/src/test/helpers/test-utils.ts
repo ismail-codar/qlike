@@ -1,7 +1,8 @@
 import { knex } from 'knex';
 
 import { AllQueryTypes } from '../../lib/builders/builder-check';
-import { DbType, ITable, SELECT } from '../../lib/sqlike';
+import { primitiveValueString } from '../../lib/builders/sql-builder-utils';
+import { DbType, ITable, SELECT, ValueStringFn } from '../../lib/sqlike';
 import { queryToString } from '../../utils/query-utils';
 
 export interface Users {
@@ -55,8 +56,9 @@ export const expectAsKnexQuery = (
 export const expectAsQueryString = (
   t: any,
   qlikeQuery: AllQueryTypes,
-  queryString
+  queryString,
+  valueString: ValueStringFn = primitiveValueString
 ) => {
-  const qlikeQueryStr = queryToString(qlikeQuery, dbType);
+  const qlikeQueryStr = queryToString(qlikeQuery, dbType, valueString);
   return t.is(queryString, qlikeQueryStr);
 };

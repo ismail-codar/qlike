@@ -95,7 +95,7 @@ export const insertQueryToString = (
           fieldNames
             .map((fieldKey) => {
               const field = query.meta.into.fields[fieldKey] as IFieldLike<any>;
-              return valueString(item[fieldKey], field.data_type, dbType);
+              return valueString(item[fieldKey], field, dbType);
             })
             .join(', ') +
           ')'
@@ -122,7 +122,7 @@ export const updateQueryToString = (
       return (
         fieldString(fieldKey) +
         ' = ' +
-        valueString(queryMeta.set[fieldKey], field.data_type, dbType)
+        valueString(queryMeta.set[fieldKey], field, dbType)
       );
     })
     .join(', ');
