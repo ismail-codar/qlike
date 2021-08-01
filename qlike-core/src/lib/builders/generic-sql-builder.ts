@@ -1,17 +1,26 @@
-import { DbType, DELETE, IFieldLike, INSERT, SELECT, UPDATE } from '../sqlike';
+import {
+  DbType,
+  DELETE,
+  IFieldLike,
+  INSERT,
+  SELECT,
+  UPDATE,
+  ValueStringFn,
+} from '../sqlike';
 
 import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
   fieldString,
+  primitiveValueString,
   tableString,
-  valueString,
   whereString,
 } from './sql-builder-utils';
 
 export const selectQueryToString = (
   query: ReturnType<typeof SELECT>,
-  dbType: DbType
+  valueString: ValueStringFn = primitiveValueString,
+  dbType: DbType = 'sqlite3'
 ) => {
   const queryMeta = query.meta;
   let str = 'select';
@@ -46,7 +55,12 @@ export const selectQueryToString = (
   // where
   if (query.meta.where) {
     str += ' where ';
-    const whereStr = whereString(query.meta.from, query.meta.where, dbType);
+    const whereStr = whereString(
+      query.meta.from,
+      query.meta.where,
+      valueString,
+      dbType
+    );
     str += whereStr.substr(1, whereStr.length - 2);
   }
 
@@ -55,6 +69,7 @@ export const selectQueryToString = (
 
 export const insertQueryToString = (
   query: ReturnType<typeof INSERT>,
+  valueString: ValueStringFn,
   dbType: DbType
 ) => {
   const queryMeta = query.meta;
@@ -67,7 +82,7 @@ export const insertQueryToString = (
   str += fieldNames.join('`, `');
   str += '`) ';
   if (isSelectQuery(queryMeta.values)) {
-    str += selectQueryToString(queryMeta.values, dbType);
+    str += selectQueryToString(queryMeta.values, valueString, dbType);
   } else {
     const values = Array.isArray(query.meta.values)
       ? query.meta.values
@@ -94,6 +109,7 @@ export const insertQueryToString = (
 
 export const updateQueryToString = (
   query: ReturnType<typeof UPDATE>,
+  valueString: ValueStringFn,
   dbType: DbType
 ) => {
   const queryMeta = query.meta;
@@ -116,6 +132,7 @@ export const updateQueryToString = (
     const whereStr = whereString(
       query.meta.updateTable,
       query.meta.where,
+      valueString,
       dbType
     );
     str += whereStr.substr(1, whereStr.length - 2);
@@ -125,6 +142,7 @@ export const updateQueryToString = (
 
 export const deleteQueryToString = (
   query: ReturnType<typeof DELETE>,
+  valueString: ValueStringFn,
   dbType: DbType
 ) => {
   const queryMeta = query.meta;
@@ -136,6 +154,7 @@ export const deleteQueryToString = (
     const whereStr = whereString(
       query.meta.deleteTable,
       query.meta.where,
+      valueString,
       dbType
     );
     str += whereStr.substr(1, whereStr.length - 2);

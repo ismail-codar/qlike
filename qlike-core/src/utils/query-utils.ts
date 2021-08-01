@@ -1,4 +1,4 @@
-import { DbType } from '..';
+import { DbType, ValueStringFn } from '..';
 import {
   AllQueryTypes,
   isInsertQuery,
@@ -11,14 +11,16 @@ import {
   selectQueryToString,
   updateQueryToString,
 } from '../lib/builders/generic-sql-builder';
+import { primitiveValueString } from '../lib/builders/sql-builder-utils';
 
 export const queryToString = (qlikeQuery: AllQueryTypes, dbType: DbType) => {
+  const valueString: ValueStringFn = primitiveValueString;
   const qlikeQueryStr = isSelectQuery(qlikeQuery)
-    ? selectQueryToString(qlikeQuery, dbType)
+    ? selectQueryToString(qlikeQuery, valueString, dbType)
     : isInsertQuery(qlikeQuery)
-    ? insertQueryToString(qlikeQuery, dbType)
+    ? insertQueryToString(qlikeQuery, valueString, dbType)
     : isUpdateQuery(qlikeQuery)
-    ? updateQueryToString(qlikeQuery, dbType)
-    : deleteQueryToString(qlikeQuery, dbType);
+    ? updateQueryToString(qlikeQuery, valueString, dbType)
+    : deleteQueryToString(qlikeQuery, valueString, dbType);
   return qlikeQueryStr;
 };

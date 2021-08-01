@@ -4,6 +4,7 @@ import {
   FieldType,
   IFieldLike,
   ITableLike,
+  ValueStringFn,
 } from '../sqlike';
 
 export const tableString = (tableName: string) => {
@@ -32,6 +33,7 @@ export const fieldFullString = (tableName: string, fieldName: string) => {
 export const whereString = (
   from: ITableLike<unknown>,
   where: AllWhereType<string>,
+  valueString: ValueStringFn,
   dbType: DbType
 ) => {
   let str = '';
@@ -45,7 +47,12 @@ export const whereString = (
   let rightStr = '';
 
   if (typeof val === 'object') {
-    leftStr += whereString(from, fld as AllWhereType<string>, dbType);
+    leftStr += whereString(
+      from,
+      fld as AllWhereType<string>,
+      valueString,
+      dbType
+    );
   } else {
     leftStr += '`';
     leftStr += fld;
@@ -53,7 +60,12 @@ export const whereString = (
   }
 
   if (typeof val === 'object') {
-    rightStr = whereString(from, val as AllWhereType<string>, dbType);
+    rightStr = whereString(
+      from,
+      val as AllWhereType<string>,
+      valueString,
+      dbType
+    );
   } else {
     const field = from.fields[fld as string] as IFieldLike<any>;
     rightStr = valueString(val, field.data_type, dbType);
@@ -70,7 +82,11 @@ export const whereString = (
   return str;
 };
 
-export const valueString = (val, fieldType: FieldType, dbType: DbType) => {
+export const primitiveValueString = (
+  val,
+  fieldType: FieldType,
+  dbType: DbType
+) => {
   if (dbType && fieldType.includes('char')) return "'" + val + "'";
   else return val;
 };
