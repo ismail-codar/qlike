@@ -57,7 +57,7 @@ const typeName = (data_type: FieldType) => {
     data_type === 'decimal'
   )
     return 'number';
-  else if (data_type === 'timestamp') return 'Date';
+  else if (data_type === 'timestamp' || data_type === 'datetime') return 'Date';
   else if (data_type.includes('blob')) return 'Blob';
   return data_type;
 };

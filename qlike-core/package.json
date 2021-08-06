@@ -36,15 +36,18 @@
     "version": "standard-version",
     "reset-hard": "git clean -dfx && git reset --hard && npm i",
     "prepare-release": "run-s reset-hard test cov:check doc:html version doc:publish",
-    "gen": "ts-node src/generators/db-schema.ts --path=src/test/helpers/test-db.json"
+    "gen": "ts-node src/generators/db-schema.ts --path=src/test/helpers/test-db.json",
+    "local": "yarn build && yalc publish && yalc push"
   },
   "engines": {
     "node": ">=10"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/better-sqlite3": "^5.4.3",
     "@types/node": "^16.4.1",
     "@types/sqlite3": "^3.1.7",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
@@ -65,7 +68,6 @@
     "nyc": "^15.1.0",
     "open-cli": "^6.0.1",
     "prettier": "^2.1.1",
-    "sqlite3": "^5.0.2",
     "standard-version": "^9.0.0",
     "ts-node": "^9.0.0",
     "typedoc": "^0.19.0",

@@ -2,9 +2,12 @@ export type DbType = 'sqlite3' | 'pg' | 'mysql' | 'oracle' | 'sqlserver';
 export type FieldType =
   | 'numeric'
   | 'varchar'
+  | 'text'
   | 'timestamp'
+  | 'datetime'
   | 'smallint'
   | 'int'
+  | 'integer'
   | 'char'
   | 'blobsubtypetext'
   | 'decimal'
