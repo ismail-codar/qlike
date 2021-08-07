@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { paramValueString } from '../lib/builders/sql-builder-utils';
 import { DELETE, ParamType } from '../lib/sqlike';
+import { paramValueString } from '../utils/query-utils';
 
 import { expectAsQueryString, usersTable } from './helpers/test-utils';
 

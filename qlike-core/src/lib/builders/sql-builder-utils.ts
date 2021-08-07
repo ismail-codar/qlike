@@ -81,39 +81,3 @@ export const whereString = (
 
   return str;
 };
-
-export const primitiveValueString = (
-  val,
-  field: IFieldLike<any>,
-  dbType: DbType
-) => {
-  if (val instanceof Date) {
-    val = val.toISOString();
-  } else if (typeof val === 'string') {
-    val = val.replace(/'/g, "''");
-  }
-  if (
-    (dbType && field.data_type.includes('char')) ||
-    field.data_type.includes('text') ||
-    field.data_type.includes('date') ||
-    field.data_type.includes('time')
-  )
-    return "'" + val + "'";
-  else return val;
-};
-
-export const paramValueString = (params: ParamType[]) => {
-  const valueString: ValueStringFn = (
-    val,
-    field: IFieldLike<any>,
-    dbType: DbType
-  ) => {
-    params.push({
-      field,
-      val,
-      dbType,
-    });
-    return '?';
-  };
-  return valueString;
-};

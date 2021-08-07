@@ -1,9 +1,8 @@
 import { knex } from 'knex';
 
 import { AllQueryTypes } from '../../lib/builders/builder-check';
-import { primitiveValueString } from '../../lib/builders/sql-builder-utils';
 import { DbType, ITable, SELECT, ValueStringFn } from '../../lib/sqlike';
-import { queryToString } from '../../utils/query-utils';
+import { primitiveValueString, queryToString } from '../../utils/query-utils';
 
 export interface Users {
   id: number;

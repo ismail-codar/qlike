@@ -6,6 +6,11 @@ import knex from 'knex';
 import schemaInspector from 'knex-schema-inspector';
 
 import { FieldType, IFieldLike, ITable } from '../lib/sqlike';
+import {
+  isDateDataType,
+  isNumericDataType,
+  isStringDataType,
+} from '../utils/query-utils';
 
 const optionDefinitions = [
   { name: 'path', alias: 'p', type: String },
@@ -50,14 +55,9 @@ const snakeToCamel = (str) =>
     );
 
 const typeName = (data_type: FieldType) => {
-  if (data_type.includes('char') || data_type.includes('text')) return 'string';
-  else if (
-    data_type.includes('int') ||
-    data_type.includes('num') ||
-    data_type === 'decimal'
-  )
-    return 'number';
-  else if (data_type === 'timestamp' || data_type === 'datetime') return 'Date';
+  if (isStringDataType(data_type)) return 'string';
+  else if (isNumericDataType(data_type)) return 'number';
+  else if (isDateDataType(data_type)) return 'Date';
   else if (data_type.includes('blob')) return 'Blob';
   return data_type;
 };

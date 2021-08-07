@@ -1,3 +1,4 @@
+import { primitiveValueString } from '../../utils/query-utils';
 import {
   DbType,
   DELETE,
@@ -12,7 +13,6 @@ import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
   fieldString,
-  primitiveValueString,
   tableString,
   whereString,
 } from './sql-builder-utils';
