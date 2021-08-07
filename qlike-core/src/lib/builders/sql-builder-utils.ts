@@ -87,7 +87,18 @@ export const primitiveValueString = (
   field: IFieldLike<any>,
   dbType: DbType
 ) => {
-  if (dbType && field.data_type.includes('char')) return "'" + val + "'";
+  if (val instanceof Date) {
+    val = val.toISOString();
+  } else if (typeof val === 'string') {
+    val = val.replace(/'/g, "''");
+  }
+  if (
+    (dbType && field.data_type.includes('char')) ||
+    field.data_type.includes('text') ||
+    field.data_type.includes('date') ||
+    field.data_type.includes('time')
+  )
+    return "'" + val + "'";
   else return val;
 };
 

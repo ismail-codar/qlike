@@ -95,7 +95,7 @@ export const ${
     tableCodes.push(tableCode);
   });
 
-  const tsFilePath = dbFilePath.substr(0, dbFilePath.length - 4) + 'ts';
+  const tsFilePath = dbFilePath.substr(0, dbFilePath.length - 5) + '-schema.ts';
   fs.writeFileSync(tsFilePath, tableCodes.join('\n'));
 
   process.exit();
