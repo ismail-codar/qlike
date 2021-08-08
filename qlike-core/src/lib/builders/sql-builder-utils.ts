@@ -80,3 +80,19 @@ export const whereString = <T>(
 
   return str;
 };
+
+export const returningString = <T>(fieldList: (keyof T)[], dbType: DbType) => {
+  let str = ' returning ';
+  if (fieldList.length === 0) {
+    if (dbType === 'sqlite3') {
+      str += '*';
+    } else {
+      str += 'row';
+    }
+  } else {
+    str += fieldList
+      .map((fieldName) => fieldString(fieldName as string))
+      .join(', ');
+  }
+  return str;
+};

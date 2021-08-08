@@ -198,12 +198,19 @@ type IntoValuesType<T> =
 export type InsertMetaType<T> = {
   into: ITable<T>;
   values: IntoValuesType<T>;
+  returning: (keyof T)[];
 };
 export const INSERT = <T>(into: ITable<T>, values: IntoValuesType<T>) => {
+  const meta: InsertMetaType<T> = {
+    into,
+    values,
+    returning: undefined,
+  };
   const ret = {
-    meta: {
-      into,
-      values,
+    meta,
+    returning: (...list: (keyof T)[]) => {
+      meta.returning = list;
+      return ret;
     },
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
@@ -215,22 +222,28 @@ export type UpdateMetaType<T> = {
   updateTable: ITable<T>;
   set: { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any };
   where: AllWhereType<keyof T>;
+  returning: (keyof T)[];
 };
 export const UPDATE = <T>(
   updateTable: ITable<T>,
-  set: { [key in keyof typeof updateTable.fields]?: any }
+  set: { [key in keyof T]?: any }
 ) => {
   const meta: UpdateMetaType<T> = {
     updateTable,
     set,
     where: undefined,
+    returning: undefined,
   };
   const ret = {
     meta,
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
-    where: (where: AllWhereType<keyof typeof updateTable.fields>) => {
+    where: (where: AllWhereType<keyof T>) => {
       ret.meta.where = where;
+      return ret;
+    },
+    returning: (...list: (keyof T)[]) => {
+      ret.meta.returning = list;
       return ret;
     },
   };
@@ -240,11 +253,13 @@ export const UPDATE = <T>(
 export type DeleteMetaType<T> = {
   deleteTable: ITable<T>;
   where: AllWhereType<keyof T>;
+  returning: (keyof T)[];
 };
 export const DELETE = <T>(deleteTable: ITable<T>) => {
   const meta: DeleteMetaType<T> = {
     deleteTable,
     where: undefined,
+    returning: undefined,
   };
   const ret = {
     meta,
@@ -252,6 +267,10 @@ export const DELETE = <T>(deleteTable: ITable<T>) => {
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
     where: (where: AllWhereType<keyof typeof deleteTable.fields>) => {
       ret.meta.where = where;
+      return ret;
+    },
+    returning: (...list: (keyof T)[]) => {
+      ret.meta.returning = list;
       return ret;
     },
   };

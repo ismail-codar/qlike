@@ -13,6 +13,7 @@ import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
   fieldString,
+  returningString,
   tableString,
   whereString,
 } from './sql-builder-utils';
@@ -102,6 +103,9 @@ export const insertQueryToString = <T>(
       })
       .join(',\n');
   }
+  if (queryMeta.returning) {
+    str += returningString<T>(queryMeta.returning, dbType);
+  }
 
   return str;
 };
@@ -135,6 +139,9 @@ export const updateQueryToString = <T>(
     );
     str += whereStr.substr(1, whereStr.length - 2);
   }
+  if (queryMeta.returning) {
+    str += returningString<T>(queryMeta.returning, dbType);
+  }
   return str;
 };
 
@@ -155,6 +162,9 @@ export const deleteQueryToString = <T>(
       dbType
     );
     str += whereStr.substr(1, whereStr.length - 2);
+  }
+  if (queryMeta.returning) {
+    str += returningString<T>(queryMeta.returning, dbType);
   }
   return str;
 };

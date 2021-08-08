@@ -15,3 +15,15 @@ test('update simple 1', (t) => {
     "update `users` set `first_name` = 'ismail', `last_name` = 'codar'"
   );
 });
+
+test('update returning 1', (t) => {
+  const qlikeQuery = UPDATE(usersTable, {
+    first_name: 'ismail',
+    last_name: 'codar',
+  }).returning('first_name');
+  expectAsQueryString(
+    t,
+    qlikeQuery.meta,
+    "update `users` set `first_name` = 'ismail', `last_name` = 'codar' returning `first_name`"
+  );
+});
