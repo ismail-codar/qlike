@@ -25,7 +25,7 @@ export const selectQueryToString = (
   const queryMeta = query.meta;
   let str = 'select';
   // fields
-  if (!queryMeta.fields) {
+  if (Object.keys(queryMeta.fields).length === 0) {
     str += ' *';
   } else {
     str += ' `';

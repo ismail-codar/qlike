@@ -16,7 +16,7 @@ export const executeQuery = async <T>(
   const queryStr = queryToString(qlikeQuery, dbType, paramValueString(params));
   const values = paramsBindValues(params, dbType);
   console.log(queryStr, values);
-  const result = (await knex(config).raw(queryStr, values)) as T;
+  const data = (await knex(config).raw(queryStr, values)) as T;
   // TODO isDev return queryStr
-  return { result };
+  return { data };
 };
