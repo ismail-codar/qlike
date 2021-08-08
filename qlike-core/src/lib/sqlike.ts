@@ -105,9 +105,9 @@ export type AllWhereType<T> =
 export const tableJoin = <L, R>(
   joinType: 'inner' | 'left' | 'right' | 'full',
   leftTable: ITable<L>,
-  leftField: keyof typeof leftTable.fields,
+  leftField: keyof L,
   rightTable: ITable<R>,
-  rightField: keyof typeof rightTable.fields
+  rightField: keyof R
 ) => {
   const fields = { ...leftTable.fields, ...rightTable.fields };
   return {
@@ -139,11 +139,22 @@ export type SelectMetaType<T> = {
   orderBy: [fld: keyof T, type: 'asc' | 'desc'][];
   limit: [limit: number, offset: number];
 };
-export const SELECT = <T>(
-  from: ITableLike<T>,
-  ...fldList: (keyof typeof from.fields & keyof T)[]
-) => {
-  const fields = {} as { [key in keyof T]: typeof from.fields[key] };
+type SelectReturnType<T> = {
+  meta: SelectMetaType<T>;
+  toJSON: () => any;
+  toString: () => string;
+  distinct: () => SelectReturnType<T>;
+  where: (where: AllWhereType<keyof T>) => SelectReturnType<T>;
+  groupBy: (...list: (keyof T)[]) => SelectReturnType<T>;
+  orderBy: (
+    ...list: [fld: keyof T, type: 'asc' | 'desc'][]
+  ) => SelectReturnType<T>;
+  limit: (limit: number, offset: number) => SelectReturnType<T>;
+};
+export const SELECT = <T>(from: ITableLike<T>, ...fldList: (keyof T)[]) => {
+  const fields = {} as {
+    [key in keyof T]: { [key in keyof T]: IFieldLike<key> }[key];
+  };
   fldList.forEach((item) => {
     fields[item] = from.fields[item];
   });
@@ -157,7 +168,7 @@ export const SELECT = <T>(
     orderBy: undefined,
     limit: undefined,
   };
-  const ret = {
+  const ret: SelectReturnType<T> = {
     meta,
     toJSON: () => ({
       ...ret.meta,
@@ -171,11 +182,11 @@ export const SELECT = <T>(
       ret.meta.distinct = true;
       return ret;
     },
-    where: (where: AllWhereType<keyof typeof from.fields>) => {
+    where: (where: AllWhereType<keyof T>) => {
       ret.meta.where = where;
       return ret;
     },
-    groupBy: (...list: (keyof typeof from.fields)[]) => {
+    groupBy: (...list: (keyof T)[]) => {
       ret.meta.groupBy = list;
       return ret;
     },
@@ -200,13 +211,19 @@ export type InsertMetaType<T> = {
   values: IntoValuesType<T>;
   returning: (keyof T)[];
 };
+type InsertReturnType<T> = {
+  meta: InsertMetaType<T>;
+  toJSON: () => any;
+  toString: () => string;
+  returning: (...list: (keyof T)[]) => InsertReturnType<T>;
+};
 export const INSERT = <T>(into: ITable<T>, values: IntoValuesType<T>) => {
   const meta: InsertMetaType<T> = {
     into,
     values,
     returning: undefined,
   };
-  const ret = {
+  const ret: InsertReturnType<T> = {
     meta,
     returning: (...list: (keyof T)[]) => {
       meta.returning = list;
@@ -224,6 +241,13 @@ export type UpdateMetaType<T> = {
   where: AllWhereType<keyof T>;
   returning: (keyof T)[];
 };
+type UpdateReturnType<T> = {
+  meta: UpdateMetaType<T>;
+  toJSON: () => any;
+  toString: () => string;
+  where: (where: AllWhereType<keyof T>) => UpdateReturnType<T>;
+  returning: (...list: (keyof T)[]) => UpdateReturnType<T>;
+};
 export const UPDATE = <T>(
   updateTable: ITable<T>,
   set: { [key in keyof T]?: any }
@@ -234,7 +258,7 @@ export const UPDATE = <T>(
     where: undefined,
     returning: undefined,
   };
-  const ret = {
+  const ret: UpdateReturnType<T> = {
     meta,
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
@@ -255,17 +279,24 @@ export type DeleteMetaType<T> = {
   where: AllWhereType<keyof T>;
   returning: (keyof T)[];
 };
+type DeleteReturnType<T> = {
+  meta: DeleteMetaType<T>;
+  toJSON: () => any;
+  toString: () => string;
+  where: (where: AllWhereType<keyof T>) => DeleteReturnType<T>;
+  returning: (...list: (keyof T)[]) => DeleteReturnType<T>;
+};
 export const DELETE = <T>(deleteTable: ITable<T>) => {
   const meta: DeleteMetaType<T> = {
     deleteTable,
     where: undefined,
     returning: undefined,
   };
-  const ret = {
+  const ret: DeleteReturnType<T> = {
     meta,
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
-    where: (where: AllWhereType<keyof typeof deleteTable.fields>) => {
+    where: (where: AllWhereType<keyof T>) => {
       ret.meta.where = where;
       return ret;
     },
