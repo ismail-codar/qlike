@@ -139,7 +139,7 @@ export type SelectMetaType<T> = {
   orderBy: [fld: keyof T, type: 'asc' | 'desc'][];
   limit: [limit: number, offset: number];
 };
-type SelectReturnType<T> = {
+export type SelectReturnType<T> = {
   meta: SelectMetaType<T>;
   toJSON: () => any;
   toString: () => string;
@@ -214,7 +214,7 @@ export type InsertMetaType<T> = {
   values: IntoValuesType<T>;
   returning: (keyof T)[];
 };
-type InsertReturnType<T> = {
+export type InsertReturnType<T> = {
   meta: InsertMetaType<T>;
   toJSON: () => any;
   toString: () => string;
@@ -244,7 +244,7 @@ export type UpdateMetaType<T> = {
   where: AllWhereType<keyof T>;
   returning: (keyof T)[];
 };
-type UpdateReturnType<T> = {
+export type UpdateReturnType<T> = {
   meta: UpdateMetaType<T>;
   toJSON: () => any;
   toString: () => string;
@@ -282,7 +282,7 @@ export type DeleteMetaType<T> = {
   where: AllWhereType<keyof T>;
   returning: (keyof T)[];
 };
-type DeleteReturnType<T> = {
+export type DeleteReturnType<T> = {
   meta: DeleteMetaType<T>;
   toJSON: () => any;
   toString: () => string;

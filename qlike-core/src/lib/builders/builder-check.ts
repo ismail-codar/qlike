@@ -3,14 +3,18 @@ import {
   BetweenWhereType,
   ConditionWhereType,
   DeleteMetaType,
+  DeleteReturnType,
   InsertMetaType,
+  InsertReturnType,
   InWhereType,
   IsWhereType,
   ITable,
   ITableLike,
   SelectMetaType,
+  SelectReturnType,
   tableJoin,
   UpdateMetaType,
+  UpdateReturnType,
 } from '../sqlike';
 
 export const isTable = <T>(
@@ -55,6 +59,12 @@ export type AllQueryMetaTypes<T> =
   | InsertMetaType<T>
   | UpdateMetaType<T>
   | DeleteMetaType<T>;
+
+export type AllQueryTypes<T> =
+  | SelectReturnType<T>
+  | InsertReturnType<T>
+  | UpdateReturnType<T>
+  | DeleteReturnType<T>;
 
 export const isSelectQuery = <T>(
   queryMeta: AllQueryMetaTypes<T> | any
