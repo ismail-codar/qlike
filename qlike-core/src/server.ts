@@ -8,7 +8,7 @@ import {
   queryToString,
 } from './utils/query-utils';
 
-export const executeQuery = async <T>(
+export const executeOne = async <T>(
   config: Knex.Config,
   queryMeta: AllQueryMetaTypes<T>
 ) => {
@@ -20,4 +20,11 @@ export const executeQuery = async <T>(
   const data = (await knex(config).raw(queryStr, values)) as T;
   // TODO isDev return queryStr
   return { data };
+};
+
+export const executeList = async <T>(
+  config: Knex.Config,
+  queryMeta: AllQueryMetaTypes<T>
+) => {
+  return await executeOne<T[]>(config, queryMeta as any);
 };

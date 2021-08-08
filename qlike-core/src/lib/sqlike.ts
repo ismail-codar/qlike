@@ -130,7 +130,7 @@ export const tableJoin = <L, R>(
 };
 
 export type SelectMetaType<T> = {
-  from: any;
+  from: ITableLike<T> | ITable<T>;
   // fields: { [key in FieldsType]: { [key in keyof T]: IFieldLike<key> }[key] };
   fields: { [key in keyof T]: IFieldLike<key> };
   distinct: boolean;
@@ -151,7 +151,10 @@ type SelectReturnType<T> = {
   ) => SelectReturnType<T>;
   limit: (limit: number, offset: number) => SelectReturnType<T>;
 };
-export const SELECT = <T>(from: ITableLike<T>, ...fldList: (keyof T)[]) => {
+export const SELECT = <T>(
+  from: ITableLike<T> | ITable<T>,
+  ...fldList: (keyof T)[]
+) => {
   const fields = {} as {
     [key in keyof T]: { [key in keyof T]: IFieldLike<key> }[key];
   };

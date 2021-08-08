@@ -13,12 +13,14 @@ import {
   UpdateMetaType,
 } from '../sqlike';
 
-export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
+export const isTable = <T>(
+  tbl: ITableLike<T> | ITable<T>
+): tbl is ITable<T> => {
   return !!tbl['name'] && !!tbl['fields'];
 };
 
 export const isJoin = (
-  tbl: ITableLike<any>
+  tbl: ITableLike<any> | ITable<any>
 ): tbl is ReturnType<typeof tableJoin> => {
   // const aa: ReturnType<typeof tableJoin>;
   return !!tbl['joinType'];
