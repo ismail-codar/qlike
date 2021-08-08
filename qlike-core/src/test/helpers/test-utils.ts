@@ -1,7 +1,7 @@
 import { knex } from 'knex';
 
-import { AllQueryTypes } from '../../lib/builders/builder-check';
-import { DbType, ITable, SELECT, ValueStringFn } from '../../lib/sqlike';
+import { AllQueryMetaTypes } from '../../lib/builders/builder-check';
+import { DbType, ITable, ValueStringFn } from '../../lib/sqlike';
 import { primitiveValueString, queryToString } from '../../utils/query-utils';
 
 export interface Users {
@@ -42,22 +42,22 @@ export const k = knex({
   useNullAsDefault: true,
 });
 
-export const expectAsKnexQuery = (
+export const expectAsKnexQuery = <T>(
   t: any,
-  qlikeQuery: ReturnType<typeof SELECT>,
+  queryMeta: AllQueryMetaTypes<T>,
   knexQuery
 ) => {
   const knexQuertyStr = knexQuery.toQuery();
-  const qlikeQueryStr = queryToString(qlikeQuery, dbType);
+  const qlikeQueryStr = queryToString(queryMeta, dbType);
   return t.is(knexQuertyStr, qlikeQueryStr);
 };
 
-export const expectAsQueryString = (
+export const expectAsQueryString = <T>(
   t: any,
-  qlikeQuery: AllQueryTypes,
+  queryMeta: AllQueryMetaTypes<T>,
   queryString,
   valueString: ValueStringFn = primitiveValueString
 ) => {
-  const qlikeQueryStr = queryToString(qlikeQuery, dbType, valueString);
+  const qlikeQueryStr = queryToString(queryMeta, dbType, valueString);
   return t.is(queryString, qlikeQueryStr);
 };

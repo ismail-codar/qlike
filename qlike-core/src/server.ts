@@ -1,19 +1,20 @@
 import knex, { Knex } from 'knex';
-import { AllQueryTypes } from './lib/builders/builder-check';
+
+import { AllQueryMetaTypes } from './lib/builders/builder-check';
 import { DbType, ParamType } from './lib/sqlike';
 import {
-  queryToString,
-  paramValueString,
   paramsBindValues,
+  paramValueString,
+  queryToString,
 } from './utils/query-utils';
 
 export const executeQuery = async <T>(
   config: Knex.Config,
-  qlikeQuery: AllQueryTypes
+  queryMeta: AllQueryMetaTypes<T>
 ) => {
   const dbType = config.client as DbType;
   const params: ParamType[] = [];
-  const queryStr = queryToString(qlikeQuery, dbType, paramValueString(params));
+  const queryStr = queryToString(queryMeta, dbType, paramValueString(params));
   const values = paramsBindValues(params, dbType);
   console.log(queryStr, values);
   const data = (await knex(config).raw(queryStr, values)) as T;

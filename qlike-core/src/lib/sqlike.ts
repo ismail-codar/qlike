@@ -129,25 +129,36 @@ export const tableJoin = <L, R>(
   };
 };
 
-export const SELECT = <T, FieldsType extends keyof T>(
+export type SelectMetaType<T> = {
+  from: any;
+  // fields: { [key in FieldsType]: { [key in keyof T]: IFieldLike<key> }[key] };
+  fields: { [key in keyof T]: IFieldLike<key> };
+  distinct: boolean;
+  where: AllWhereType<keyof T>;
+  groupBy: (keyof T)[];
+  orderBy: [fld: keyof T, type: 'asc' | 'desc'][];
+  limit: [limit: number, offset: number];
+};
+export const SELECT = <T>(
   from: ITableLike<T>,
-  ...fldList: (keyof typeof from.fields & FieldsType)[]
+  ...fldList: (keyof typeof from.fields & keyof T)[]
 ) => {
-  const fields = {} as { [key in FieldsType]: typeof from.fields[key] };
+  const fields = {} as { [key in keyof T]: typeof from.fields[key] };
   fldList.forEach((item) => {
     fields[item] = from.fields[item];
   });
 
+  const meta: SelectMetaType<T> = {
+    from,
+    fields,
+    distinct: undefined as boolean,
+    where: undefined,
+    groupBy: undefined,
+    orderBy: undefined,
+    limit: undefined,
+  };
   const ret = {
-    meta: {
-      from,
-      fields,
-      distinct: undefined as boolean,
-      where: undefined,
-      groupBy: undefined,
-      orderBy: undefined,
-      limit: undefined,
-    },
+    meta,
     toJSON: () => ({
       ...ret.meta,
       ...{
@@ -168,7 +179,7 @@ export const SELECT = <T, FieldsType extends keyof T>(
       ret.meta.groupBy = list;
       return ret;
     },
-    orderBy: (...list: [fld: FieldsType, type: 'asc' | 'desc'][]) => {
+    orderBy: (...list: [fld: keyof T, type: 'asc' | 'desc'][]) => {
       ret.meta.orderBy = list;
       return ret;
     },
@@ -180,16 +191,15 @@ export const SELECT = <T, FieldsType extends keyof T>(
   return ret;
 };
 
-// https://dev.mysql.com/doc/refman/8.0/en/insert.html
-// https://www.sqlite.org/lang_insert.html
-//  https://www.techonthenet.com/sqlite/insert.php
-export const INSERT = <T>(
-  into: ITable<T>,
-  values:
-    | { [key in keyof typeof into.fields]?: any }
-    | { [key in keyof typeof into.fields]?: any }[]
-    | ReturnType<typeof SELECT>
-) => {
+type IntoValuesType<T> =
+  | { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any }
+  | { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any }[]
+  | SelectMetaType<T>;
+export type InsertMetaType<T> = {
+  into: ITable<T>;
+  values: IntoValuesType<T>;
+};
+export const INSERT = <T>(into: ITable<T>, values: IntoValuesType<T>) => {
   const ret = {
     meta: {
       into,
@@ -201,16 +211,22 @@ export const INSERT = <T>(
   return ret;
 };
 
+export type UpdateMetaType<T> = {
+  updateTable: ITable<T>;
+  set: { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any };
+  where: AllWhereType<keyof T>;
+};
 export const UPDATE = <T>(
   updateTable: ITable<T>,
   set: { [key in keyof typeof updateTable.fields]?: any }
 ) => {
+  const meta: UpdateMetaType<T> = {
+    updateTable,
+    set,
+    where: undefined,
+  };
   const ret = {
-    meta: {
-      updateTable,
-      set,
-      where: undefined,
-    },
+    meta,
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
     where: (where: AllWhereType<keyof typeof updateTable.fields>) => {
@@ -221,12 +237,17 @@ export const UPDATE = <T>(
   return ret;
 };
 
+export type DeleteMetaType<T> = {
+  deleteTable: ITable<T>;
+  where: AllWhereType<keyof T>;
+};
 export const DELETE = <T>(deleteTable: ITable<T>) => {
+  const meta: DeleteMetaType<T> = {
+    deleteTable,
+    where: undefined,
+  };
   const ret = {
-    meta: {
-      deleteTable,
-      where: undefined,
-    },
+    meta,
     toJSON: () => ret.meta,
     toString: () => JSON.stringify(ret.toJSON(), null, 1),
     where: (where: AllWhereType<keyof typeof deleteTable.fields>) => {

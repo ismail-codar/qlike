@@ -23,7 +23,7 @@ test('users accounts join 1', (t) => {
     .from('users')
     .rightJoin('accounts', 'users.id', 'accounts.user_id');
 
-  expectAsKnexQuery(t, qlikeQuery, knexQuery);
+  expectAsKnexQuery(t, qlikeQuery.meta, knexQuery);
 });
 
 test('where 1', (t) => {
@@ -33,9 +33,10 @@ test('where 1', (t) => {
     ['last_name', '=', 'User'],
   ]);
 
+  const queryMeta = qlikeQuery.meta;
   expectAsQueryString(
     t,
-    qlikeQuery,
+    queryMeta,
     "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User')"
   );
 });

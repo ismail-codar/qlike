@@ -3,7 +3,6 @@ import {
   DbType,
   IFieldLike,
   ITableLike,
-  ParamType,
   ValueStringFn,
 } from '../sqlike';
 
@@ -30,9 +29,9 @@ export const fieldFullString = (tableName: string, fieldName: string) => {
   return str;
 };
 
-export const whereString = (
-  from: ITableLike<unknown>,
-  where: AllWhereType<string>,
+export const whereString = <T>(
+  from: ITableLike<T>,
+  where: AllWhereType<keyof T>,
   valueString: ValueStringFn,
   dbType: DbType
 ) => {
@@ -49,7 +48,7 @@ export const whereString = (
   if (typeof val === 'object') {
     leftStr += whereString(
       from,
-      fld as AllWhereType<string>,
+      fld as AllWhereType<keyof T>,
       valueString,
       dbType
     );
@@ -62,7 +61,7 @@ export const whereString = (
   if (typeof val === 'object') {
     rightStr = whereString(
       from,
-      val as AllWhereType<string>,
+      val as AllWhereType<keyof T>,
       valueString,
       dbType
     );

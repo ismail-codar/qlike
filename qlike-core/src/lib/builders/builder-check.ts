@@ -2,15 +2,15 @@ import {
   AllWhereType,
   BetweenWhereType,
   ConditionWhereType,
-  DELETE,
-  INSERT,
+  DeleteMetaType,
+  InsertMetaType,
   InWhereType,
   IsWhereType,
   ITable,
   ITableLike,
-  SELECT,
+  SelectMetaType,
   tableJoin,
-  UPDATE,
+  UpdateMetaType,
 } from '../sqlike';
 
 export const isTable = <T>(tbl: ITableLike<T>): tbl is ITable<T> => {
@@ -48,32 +48,32 @@ export const isConditionWhereType = <T>(
   return where[1] === 'and' || where[1] === 'or';
 };
 
-export type AllQueryTypes =
-  | ReturnType<typeof SELECT>
-  | ReturnType<typeof INSERT>
-  | ReturnType<typeof UPDATE>
-  | ReturnType<typeof DELETE>;
+export type AllQueryMetaTypes<T> =
+  | SelectMetaType<T>
+  | InsertMetaType<T>
+  | UpdateMetaType<T>
+  | DeleteMetaType<T>;
 
-export const isSelectQuery = (
-  query: AllQueryTypes | any
-): query is ReturnType<typeof SELECT> => {
-  return !!query?.['meta']?.from;
+export const isSelectQuery = <T>(
+  queryMeta: AllQueryMetaTypes<T> | any
+): queryMeta is SelectMetaType<T> => {
+  return !!queryMeta?.from;
 };
 
-export const isInsertQuery = (
-  query: AllQueryTypes | any
-): query is ReturnType<typeof INSERT> => {
-  return !!query?.['meta']?.into;
+export const isInsertQuery = <T>(
+  queryMeta: AllQueryMetaTypes<T> | any
+): queryMeta is InsertMetaType<T> => {
+  return !!queryMeta?.into;
 };
 
-export const isUpdateQuery = (
-  query: AllQueryTypes | any
-): query is ReturnType<typeof UPDATE> => {
-  return !!query?.['meta']?.updateTable;
+export const isUpdateQuery = <T>(
+  queryMeta: AllQueryMetaTypes<T> | any
+): queryMeta is UpdateMetaType<T> => {
+  return !!queryMeta?.updateTable;
 };
 
-export const isDeleteQuery = (
-  query: AllQueryTypes | any
-): query is ReturnType<typeof DELETE> => {
-  return !!query?.['meta']?.deleteTable;
+export const isDeleteQuery = <T>(
+  queryMeta: AllQueryMetaTypes<T> | any
+): queryMeta is DeleteMetaType<T> => {
+  return !!queryMeta?.deleteTable;
 };

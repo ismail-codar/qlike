@@ -1,6 +1,6 @@
 import { DbType, FieldType, IFieldLike, ParamType, ValueStringFn } from '..';
 import {
-  AllQueryTypes,
+  AllQueryMetaTypes,
   isInsertQuery,
   isSelectQuery,
   isUpdateQuery,
@@ -59,18 +59,21 @@ export const paramValueString = (params: ParamType[]) => {
   return valueString;
 };
 
-export const queryToString = (
-  qlikeQuery: AllQueryTypes,
+export const queryToString = <T>(
+  queryMeta: AllQueryMetaTypes<T>,
   dbType: DbType = 'sqlite3',
   valueString: ValueStringFn = primitiveValueString
 ) => {
-  const qlikeQueryStr = isSelectQuery(qlikeQuery)
-    ? selectQueryToString(qlikeQuery, dbType, valueString)
-    : isInsertQuery(qlikeQuery)
-    ? insertQueryToString(qlikeQuery, dbType, valueString)
-    : isUpdateQuery(qlikeQuery)
-    ? updateQueryToString(qlikeQuery, dbType, valueString)
-    : deleteQueryToString(qlikeQuery, dbType, valueString);
+  if (isSelectQuery<T>(queryMeta)) {
+    queryMeta;
+  }
+  const qlikeQueryStr = isSelectQuery<T>(queryMeta)
+    ? selectQueryToString(queryMeta, dbType, valueString)
+    : isInsertQuery<T>(queryMeta)
+    ? insertQueryToString(queryMeta, dbType, valueString)
+    : isUpdateQuery<T>(queryMeta)
+    ? updateQueryToString(queryMeta, dbType, valueString)
+    : deleteQueryToString(queryMeta, dbType, valueString);
   return qlikeQueryStr;
 };
 

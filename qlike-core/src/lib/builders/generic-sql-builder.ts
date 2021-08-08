@@ -1,11 +1,11 @@
 import { primitiveValueString } from '../../utils/query-utils';
 import {
   DbType,
-  DELETE,
+  DeleteMetaType,
   IFieldLike,
-  INSERT,
-  SELECT,
-  UPDATE,
+  InsertMetaType,
+  SelectMetaType,
+  UpdateMetaType,
   ValueStringFn,
 } from '../sqlike';
 
@@ -17,12 +17,11 @@ import {
   whereString,
 } from './sql-builder-utils';
 
-export const selectQueryToString = (
-  query: ReturnType<typeof SELECT>,
+export const selectQueryToString = <T>(
+  queryMeta: SelectMetaType<T>,
   dbType: DbType = 'sqlite3',
   valueString: ValueStringFn = primitiveValueString
 ) => {
-  const queryMeta = query.meta;
   let str = 'select';
   // fields
   if (Object.keys(queryMeta.fields).length === 0) {
@@ -53,11 +52,11 @@ export const selectQueryToString = (
     )}`;
   }
   // where
-  if (query.meta.where) {
+  if (queryMeta.where) {
     str += ' where ';
     const whereStr = whereString(
-      query.meta.from,
-      query.meta.where,
+      queryMeta.from,
+      queryMeta.where,
       valueString,
       dbType
     );
@@ -67,26 +66,26 @@ export const selectQueryToString = (
   return str;
 };
 
-export const insertQueryToString = (
-  query: ReturnType<typeof INSERT>,
+export const insertQueryToString = <T>(
+  queryMeta: InsertMetaType<T>,
   dbType: DbType,
   valueString: ValueStringFn
 ) => {
-  const queryMeta = query.meta;
-  const fieldNames = Array.isArray(query.meta.values)
-    ? Object.keys(query.meta.values[0])
-    : Object.keys(query.meta.values);
+  const fieldNames = Array.isArray(queryMeta.values)
+    ? Object.keys(queryMeta.values[0])
+    : Object.keys(queryMeta.values);
   let str = 'insert into ';
   str += tableString(queryMeta.into.name);
   str += ' (`';
   str += fieldNames.join('`, `');
   str += '`) ';
   if (isSelectQuery(queryMeta.values)) {
-    str += selectQueryToString(queryMeta.values, dbType, valueString);
+    // TODO as any
+    str += selectQueryToString<T>(queryMeta.values as any, dbType, valueString);
   } else {
-    const values = Array.isArray(query.meta.values)
-      ? query.meta.values
-      : [query.meta.values];
+    const values = Array.isArray(queryMeta.values)
+      ? queryMeta.values
+      : [queryMeta.values];
     str += 'values ';
     str += values
       .map((item) => {
@@ -94,7 +93,7 @@ export const insertQueryToString = (
           '(' +
           fieldNames
             .map((fieldKey) => {
-              const field = query.meta.into.fields[fieldKey] as IFieldLike<any>;
+              const field = queryMeta.into.fields[fieldKey] as IFieldLike<any>;
               return valueString(item[fieldKey], field, dbType);
             })
             .join(', ') +
@@ -107,12 +106,11 @@ export const insertQueryToString = (
   return str;
 };
 
-export const updateQueryToString = (
-  query: ReturnType<typeof UPDATE>,
+export const updateQueryToString = <T>(
+  queryMeta: UpdateMetaType<T>,
   dbType: DbType,
   valueString: ValueStringFn
 ) => {
-  const queryMeta = query.meta;
   let str = 'update ';
   str += tableString(queryMeta.updateTable.name);
   str += ' set ';
@@ -127,11 +125,11 @@ export const updateQueryToString = (
     })
     .join(', ');
   // where
-  if (query.meta.where) {
+  if (queryMeta.where) {
     str += ' where ';
-    const whereStr = whereString(
-      query.meta.updateTable,
-      query.meta.where,
+    const whereStr = whereString<T>(
+      queryMeta.updateTable,
+      queryMeta.where,
       valueString,
       dbType
     );
@@ -140,20 +138,19 @@ export const updateQueryToString = (
   return str;
 };
 
-export const deleteQueryToString = (
-  query: ReturnType<typeof DELETE>,
+export const deleteQueryToString = <T>(
+  queryMeta: DeleteMetaType<T>,
   dbType: DbType,
   valueString: ValueStringFn
 ) => {
-  const queryMeta = query.meta;
   let str = 'delete from ';
   str += tableString(queryMeta.deleteTable.name);
   // where
-  if (query.meta.where) {
+  if (queryMeta.where) {
     str += ' where ';
     const whereStr = whereString(
-      query.meta.deleteTable,
-      query.meta.where,
+      queryMeta.deleteTable,
+      queryMeta.where,
       valueString,
       dbType
     );

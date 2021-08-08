@@ -11,7 +11,7 @@ test('update simple 1', (t) => {
   });
   expectAsQueryString(
     t,
-    qlikeQuery,
+    qlikeQuery.meta,
     "update `users` set `first_name` = 'ismail', `last_name` = 'codar'"
   );
 });
