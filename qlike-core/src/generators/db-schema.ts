@@ -71,10 +71,18 @@ getSchema().then((schema) => {
     const tableCode = `
 export interface ${tableName}Table {
   ${Object.keys(table.fields)
-    .map(
-      (fieldName) =>
-        fieldName + ': ' + typeName(table.fields[fieldName].data_type) + ';'
-    )
+    .map((fieldName) => {
+      const nullable =
+        table.fields[fieldName].is_nullable ||
+        table.fields[fieldName].has_auto_increment;
+      return (
+        fieldName +
+        (nullable ? '?' : '') +
+        ': ' +
+        typeName(table.fields[fieldName].data_type) +
+        ';'
+      );
+    })
     .join('\n  ')}
 }
 
