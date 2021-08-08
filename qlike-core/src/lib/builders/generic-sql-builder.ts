@@ -24,6 +24,9 @@ export const selectQueryToString = <T>(
   valueString: ValueStringFn = primitiveValueString
 ) => {
   let str = 'select';
+  if (queryMeta.distinct) {
+    str += ' distinct';
+  }
   // fields
   if (Object.keys(queryMeta.fields).length === 0) {
     str += ' *';
