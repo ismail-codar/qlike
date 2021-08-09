@@ -81,18 +81,35 @@ export const whereString = <T>(
   return str;
 };
 
-export const returningString = <T>(fieldList: (keyof T)[], dbType: DbType) => {
-  let str = ' returning ';
-  if (fieldList.length === 0) {
-    if (dbType === 'sqlite3') {
-      str += '*';
-    } else {
-      str += 'row';
-    }
+export const idField = <T>(fields: { [key in keyof T]: IFieldLike<key> }) => {
+  const idName = Object.keys(fields).find((fieldName) => {
+    const field = fields[fieldName] as IFieldLike<string>;
+    return field.has_auto_increment;
+  });
+  return fields[idName] || fields['id'];
+};
+
+export const returningString = <T>(opt: {
+  fieldList: (keyof T)[];
+  usageType: 'insert' | 'update' | 'delete';
+  tableName: string;
+  idField: string;
+  dbType: DbType;
+}) => {
+  const { fieldList, usageType, dbType, tableName, idField } = opt;
+  let str = '';
+  const returnFields =
+    fieldList.length === 0
+      ? '*'
+      : fieldList
+          .map((fieldName) => fieldString(fieldName as string))
+          .join(', ');
+
+  if (dbType === 'sqlite3' && usageType === 'insert') {
+    str += ` ;;; SELECT ${returnFields} from \`${tableName}\` where \`${idField}\` = (select MAX(\`${idField}\`) from \`${tableName}\`)`;
   } else {
-    str += fieldList
-      .map((fieldName) => fieldString(fieldName as string))
-      .join(', ');
+    str += ' returning ';
+    str += returnFields;
   }
   return str;
 };

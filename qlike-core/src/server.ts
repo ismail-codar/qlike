@@ -8,29 +8,76 @@ import {
   queryToString,
 } from './utils/query-utils';
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
-const execute = async <T>(config: Knex.Config, query: AllQueryTypes<T>) => {
+export const executeKnex = (
+  config: Knex.Config,
+  queryStr: string,
+  values: any[]
+) => {
+  return new Promise((resolve) => {
+    isDev && console.log(queryStr, values);
+    knex(config)
+      .raw(queryStr, values)
+      .then((data) => {
+        resolve({ data, error: undefined });
+      })
+      .catch((error) => {
+        resolve({ data: undefined, error: error });
+      });
+  });
+};
+
+const execute = async (config: Knex.Config, query: AllQueryTypes<any>) => {
   const dbType = config.client as DbType;
   const params: ParamType[] = [];
   const queryStr = queryToString(query.meta, dbType, paramValueString(params));
   const values = paramsBindValues(params, dbType);
-  isDev && console.log(queryStr, values);
-  const data = (await knex(config).raw(queryStr, values)) as T;
-  // TODO isDev return queryStr
-  return { data };
+  if (dbType === 'sqlite3' && queryStr.indexOf(' ;;; ') !== -1) {
+    const queryStrList = queryStr.split(' ;;; ');
+    const resolveDataList = [];
+    for (var i = 0; i < queryStrList.length; i++) {
+      const str = queryStrList[i];
+      const valueCount = str.split('?').length - 1;
+      const resolveData = await executeKnex(
+        config,
+        str,
+        values.splice(0, valueCount)
+      );
+      resolveDataList.push(resolveData);
+    }
+    return resolveDataList;
+  } else {
+    return await executeKnex(config, queryStr, values);
+  }
 };
 
 export const executeOne = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  return await execute<T>(config, query);
+  const result = (await execute(config, query)) as { data: T; error: any };
+  if (Array.isArray(result.data) && result.data.length === 1) {
+    result.data = result.data[0];
+  }
+  return result;
 };
 
 export const executeList = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  return await execute<T[]>(config, query as any);
+  const result = (await execute(config, query)) as { data: T[]; error: any };
+  if (!Array.isArray(result.data)) {
+    result.data = [result.data];
+  }
+  return result;
+};
+
+export const executeMultiList = async <T>(
+  config: Knex.Config,
+  query: AllQueryTypes<T>
+) => {
+  const result = (await execute(config, query)) as { data: T[]; error: any }[];
+  return result;
 };

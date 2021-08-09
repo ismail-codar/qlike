@@ -13,6 +13,7 @@ import { isJoin, isSelectQuery, isTable } from './builder-check';
 import {
   fieldFullString,
   fieldString,
+  idField,
   returningString,
   tableString,
   whereString,
@@ -107,7 +108,13 @@ export const insertQueryToString = <T>(
       .join(',\n');
   }
   if (queryMeta.returning) {
-    str += returningString<T>(queryMeta.returning, dbType);
+    str += returningString<T>({
+      fieldList: queryMeta.returning,
+      usageType: 'insert',
+      dbType,
+      tableName: queryMeta.into.name,
+      idField: idField<T>(queryMeta.into.fields).name,
+    });
   }
 
   return str;
@@ -143,7 +150,13 @@ export const updateQueryToString = <T>(
     str += whereStr.substr(1, whereStr.length - 2);
   }
   if (queryMeta.returning) {
-    str += returningString<T>(queryMeta.returning, dbType);
+    str += returningString<T>({
+      fieldList: queryMeta.returning,
+      usageType: 'update',
+      dbType,
+      tableName: queryMeta.updateTable.name,
+      idField: idField<T>(queryMeta.updateTable.fields).name,
+    });
   }
   return str;
 };
@@ -167,7 +180,13 @@ export const deleteQueryToString = <T>(
     str += whereStr.substr(1, whereStr.length - 2);
   }
   if (queryMeta.returning) {
-    str += returningString<T>(queryMeta.returning, dbType);
+    str += returningString<T>({
+      fieldList: queryMeta.returning,
+      usageType: 'delete',
+      dbType,
+      tableName: queryMeta.deleteTable.name,
+      idField: idField<T>(queryMeta.deleteTable.fields).name,
+    });
   }
   return str;
 };
