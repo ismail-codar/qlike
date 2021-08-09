@@ -1,6 +1,10 @@
 import knex, { Knex } from 'knex';
 
-import { AllQueryMetaTypes, AllQueryTypes } from './lib/builders/builder-check';
+import {
+  AllQueryMetaTypes,
+  AllQueryTypes,
+  isInsertQuery,
+} from './lib/builders/builder-check';
 import { DbType, ParamType } from './lib/sqlike';
 import {
   paramsBindValues,
@@ -56,9 +60,18 @@ export const executeOne = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  const result = (await execute(config, query)) as { data: T; error: any };
+  let result: {
+    data: T;
+    error: any;
+  } = (await execute(config, query)) as { data: T; error: any };
   if (Array.isArray(result.data) && result.data.length === 1) {
     result.data = result.data[0];
+  } else if (
+    Array.isArray(result) &&
+    isInsertQuery(query.meta) &&
+    query.meta.returning
+  ) {
+    result.data = result.pop()?.data.pop();
   }
   return result;
 };
