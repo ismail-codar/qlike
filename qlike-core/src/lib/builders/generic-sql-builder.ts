@@ -67,6 +67,14 @@ export const selectQueryToString = <T>(
     );
     str += whereStr.substr(1, whereStr.length - 2);
   }
+  if (queryMeta.orderBy) {
+    str += ' order by ';
+    str += Object.keys(queryMeta.orderBy)
+      .map((orderByKey) => {
+        return orderByKey + ' ' + queryMeta.orderBy[orderByKey];
+      })
+      .join(', ');
+  }
 
   return str;
 };

@@ -1,10 +1,6 @@
 import knex, { Knex } from 'knex';
 
-import {
-  AllQueryMetaTypes,
-  AllQueryTypes,
-  isInsertQuery,
-} from './lib/builders/builder-check';
+import { AllQueryTypes, isInsertQuery } from './lib/builders/builder-check';
 import { DbType, ParamType } from './lib/sqlike';
 import {
   paramsBindValues,
@@ -40,7 +36,7 @@ const execute = async (config: Knex.Config, query: AllQueryTypes<any>) => {
   if (dbType === 'sqlite3' && queryStr.indexOf(' ;;; ') !== -1) {
     const queryStrList = queryStr.split(' ;;; ');
     const resolveDataList = [];
-    for (var i = 0; i < queryStrList.length; i++) {
+    for (let i = 0; i < queryStrList.length; i++) {
       const str = queryStrList[i];
       const valueCount = str.split('?').length - 1;
       const resolveData = await executeKnex(
@@ -60,7 +56,7 @@ export const executeOne = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  let result: {
+  const result: {
     data: T;
     error: any;
   } = (await execute(config, query)) as { data: T; error: any };

@@ -136,7 +136,9 @@ export type SelectMetaType<T> = {
   distinct: boolean;
   where: AllWhereType<keyof T>;
   groupBy: (keyof T)[];
-  orderBy: [fld: keyof T, type: 'asc' | 'desc'][];
+  orderBy: {
+    [fld in keyof T]?: 'asc' | 'desc';
+  };
   limit: [limit: number, offset: number];
 };
 export type SelectReturnType<T> = {
@@ -147,7 +149,9 @@ export type SelectReturnType<T> = {
   where: (where: AllWhereType<keyof T>) => SelectReturnType<T>;
   groupBy: (...list: (keyof T)[]) => SelectReturnType<T>;
   orderBy: (
-    ...list: [fld: keyof T, type: 'asc' | 'desc'][]
+    list: {
+      [fld in keyof T]?: 'asc' | 'desc';
+    }
   ) => SelectReturnType<T>;
   limit: (limit: number, offset: number) => SelectReturnType<T>;
 };
@@ -193,7 +197,11 @@ export const SELECT = <T>(
       ret.meta.groupBy = list;
       return ret;
     },
-    orderBy: (...list: [fld: keyof T, type: 'asc' | 'desc'][]) => {
+    orderBy: (
+      list: {
+        [fld in keyof T]?: 'asc' | 'desc';
+      }
+    ) => {
       ret.meta.orderBy = list;
       return ret;
     },

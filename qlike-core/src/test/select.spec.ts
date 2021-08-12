@@ -27,16 +27,17 @@ test('users accounts join 1', (t) => {
 });
 
 test('where 1', (t) => {
-  const qlikeQuery = SELECT(usersTable, 'id').where([
-    ['first_name', '=', 'Test'],
-    'and',
-    ['last_name', '=', 'User'],
-  ]);
+  const qlikeQuery = SELECT(usersTable, 'id')
+    .where([['first_name', '=', 'Test'], 'and', ['last_name', '=', 'User']])
+    .orderBy({
+      first_name: 'desc',
+      last_name: 'asc',
+    });
 
   const queryMeta = qlikeQuery.meta;
   expectAsQueryString(
     t,
     queryMeta,
-    "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User')"
+    "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User') order by first_name desc, last_name asc"
   );
 });
