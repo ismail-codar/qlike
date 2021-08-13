@@ -15,17 +15,8 @@ export const executeKnex = (
   queryStr: string,
   values: any[]
 ) => {
-  return new Promise((resolve) => {
-    isDev && console.log(queryStr, values);
-    knex(config)
-      .raw(queryStr, values)
-      .then((data) => {
-        resolve({ data, error: undefined });
-      })
-      .catch((error) => {
-        resolve({ data: undefined, error: error });
-      });
-  });
+  isDev && console.log(queryStr, values);
+  return knex(config).raw(queryStr, values);
 };
 
 const execute = async (config: Knex.Config, query: AllQueryTypes<any>) => {
@@ -56,18 +47,15 @@ export const executeOne = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  const result: {
-    data: T;
-    error: any;
-  } = (await execute(config, query)) as { data: T; error: any };
-  if (Array.isArray(result.data) && result.data.length === 1) {
-    result.data = result.data[0];
+  let result = await execute(config, query);
+  if (Array.isArray(result) && result.length === 1) {
+    result = result[0];
   } else if (
     Array.isArray(result) &&
     isInsertQuery(query.meta) &&
     query.meta.returning
   ) {
-    result.data = result.pop()?.data.pop();
+    result = result.pop()?.pop();
   }
   return result;
 };
@@ -76,9 +64,9 @@ export const executeList = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  const result = (await execute(config, query)) as { data: T[]; error: any };
-  if (!Array.isArray(result.data)) {
-    result.data = [result.data];
+  let result = (await execute(config, query)) as T[];
+  if (!Array.isArray(result)) {
+    result = [result];
   }
   return result;
 };
@@ -87,6 +75,6 @@ export const executeMultiList = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
 ) => {
-  const result = (await execute(config, query)) as { data: T[]; error: any }[];
+  const result = (await execute(config, query)) as T[][];
   return result;
 };
