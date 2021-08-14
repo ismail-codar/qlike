@@ -6,9 +6,6 @@ import {
   ValueStringFn,
 } from '../sqlike';
 
-import { isSelectQuery } from './builder-check';
-import { selectQueryToString } from './generic-sql-builder';
-
 export const tableString = (tableName: string) => {
   let str = '`';
   str += tableName;
@@ -47,8 +44,9 @@ export const whereString = <T>(
 
   let leftStr = '';
   let rightStr = '';
+  const isWherePart = Array.isArray(val) && val.length === 3 && op !== 'in';
 
-  if (typeof val === 'object') {
+  if (isWherePart) {
     leftStr += whereString(
       from,
       fld as AllWhereType<keyof T>,
@@ -61,9 +59,7 @@ export const whereString = <T>(
     leftStr += '`';
   }
 
-  if (isSelectQuery(val)) {
-    rightStr = selectQueryToString(val.meta, dbType, valueString);
-  } else if (typeof val === 'object') {
+  if (isWherePart) {
     rightStr = whereString(
       from,
       val as AllWhereType<keyof T>,

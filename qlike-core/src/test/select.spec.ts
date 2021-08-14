@@ -40,3 +40,17 @@ test('where 1', (t) => {
     "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User') order by `first_name` desc, `last_name` asc"
   );
 });
+
+test('where IN keyword 1', (t) => {
+  const qlikeQuery = SELECT(usersTable, 'id').where([
+    'id',
+    'in',
+    SELECT(usersTable, 'id').where(['id', 'in', [1, 2]]),
+  ]);
+
+  expectAsQueryString(
+    t,
+    qlikeQuery,
+    'select `id` from `users` where `id` in (select `id` from `users` where `id` in (1, 2))'
+  );
+});

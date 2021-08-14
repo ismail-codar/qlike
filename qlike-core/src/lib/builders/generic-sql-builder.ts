@@ -94,7 +94,11 @@ export const insertQueryToString = <T>(
   str += '`) ';
   if (isSelectQuery(queryMeta.values)) {
     // TODO as any
-    str += selectQueryToString<T>(queryMeta.values as any, dbType, valueString);
+    str += selectQueryToString(
+      queryMeta.values as SelectMetaType<T>,
+      dbType,
+      valueString
+    );
   } else {
     const values = Array.isArray(queryMeta.values)
       ? queryMeta.values

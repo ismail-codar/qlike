@@ -28,6 +28,22 @@ export const primitiveValueString = (
   field: IFieldLike<any>,
   dbType: DbType
 ) => {
+  if (isSelectQuery(val)) {
+    return (
+      '(' + selectQueryToString(val.meta, dbType, primitiveValueString) + ')'
+    );
+  } else if (Array.isArray(val)) {
+    return (
+      '(' +
+      val
+        .map((item) => {
+          return primitiveValueString(item, field, dbType);
+        })
+        .join(', ') +
+      ')'
+    );
+  }
+
   if (val instanceof Date) {
     val = val.toISOString();
   } else if (typeof val === 'string') {
