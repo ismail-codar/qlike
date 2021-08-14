@@ -89,7 +89,7 @@ export type InWhereType<T> = [
   fld: T,
   op: 'in',
   // TODO val: ReturnType<typeof SELECT> | ValType[]
-  val: ValType[],
+  val: ValType[] | SelectReturnType<any>,
   not?: 'NOT'
 ];
 

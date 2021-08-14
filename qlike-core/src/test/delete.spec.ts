@@ -7,7 +7,7 @@ import { expectAsQueryString, usersTable } from './helpers/test-utils';
 
 test('delete simple 1', (t) => {
   const qlikeQuery = DELETE(usersTable).where(['id', '=', 1]);
-  expectAsQueryString(t, qlikeQuery.meta, 'delete from `users` where `id` = 1');
+  expectAsQueryString(t, qlikeQuery, 'delete from `users` where `id` = 1');
 });
 
 test('delete simple params 1', (t) => {
@@ -15,7 +15,7 @@ test('delete simple params 1', (t) => {
   const params: ParamType[] = [];
   expectAsQueryString(
     t,
-    qlikeQuery.meta,
+    qlikeQuery,
     'delete from `users` where `id` = ?',
     paramValueString(params)
   );

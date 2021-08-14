@@ -1,10 +1,6 @@
 import knex, { Knex } from 'knex';
 
-import {
-  AllQueryTypes,
-  isInsertQuery,
-  isSelectQuery,
-} from './lib/builders/builder-check';
+import { AllQueryTypes, isInsertQuery } from './lib/builders/builder-check';
 import { DbType, ParamType } from './lib/sqlike';
 import {
   paramsBindValues,
@@ -26,7 +22,7 @@ export const executeKnex = (
 const execute = async (config: Knex.Config, query: AllQueryTypes<any>) => {
   const dbType = config.client as DbType;
   const params: ParamType[] = [];
-  const queryStr = queryToString(query.meta, dbType, paramValueString(params));
+  const queryStr = queryToString(query, dbType, paramValueString(params));
   const values = paramsBindValues(params, dbType);
   if (dbType === 'sqlite3' && queryStr.indexOf(' ;;; ') !== -1) {
     const queryStrList = queryStr.split(' ;;; ');
@@ -61,7 +57,7 @@ export const executeOne = async <T>(
       } else if (result.length > 1) {
         throw (
           'executeOne returns more than one result:\n' +
-          queryToString(query.meta, config.client as DbType)
+          queryToString(query, config.client as DbType)
         );
       }
     }

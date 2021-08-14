@@ -13,7 +13,7 @@ test('insert simple 1', (t) => {
   ]);
   expectAsQueryString(
     t,
-    qlikeQuery.meta,
+    qlikeQuery,
     "insert into `users` (`first_name`, `last_name`) values ('ismail', 'codar')"
   );
 });

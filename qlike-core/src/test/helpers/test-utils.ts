@@ -1,6 +1,6 @@
 import { knex } from 'knex';
 
-import { AllQueryMetaTypes } from '../../lib/builders/builder-check';
+import { AllQueryTypes } from '../../lib/builders/builder-check';
 import { DbType, ITable, ValueStringFn } from '../../lib/sqlike';
 import { primitiveValueString, queryToString } from '../../utils/query-utils';
 
@@ -44,20 +44,20 @@ export const k = knex({
 
 export const expectAsKnexQuery = <T>(
   t: any,
-  queryMeta: AllQueryMetaTypes<T>,
+  query: AllQueryTypes<T>,
   knexQuery
 ) => {
   const knexQuertyStr = knexQuery.toQuery();
-  const qlikeQueryStr = queryToString(queryMeta, dbType);
+  const qlikeQueryStr = queryToString(query, dbType);
   return t.is(knexQuertyStr, qlikeQueryStr);
 };
 
 export const expectAsQueryString = <T>(
   t: any,
-  queryMeta: AllQueryMetaTypes<T>,
+  query: AllQueryTypes<T>,
   queryString,
   valueString: ValueStringFn = primitiveValueString
 ) => {
-  const qlikeQueryStr = queryToString(queryMeta, dbType, valueString);
+  const qlikeQueryStr = queryToString(query, dbType, valueString);
   return t.is(queryString, qlikeQueryStr);
 };

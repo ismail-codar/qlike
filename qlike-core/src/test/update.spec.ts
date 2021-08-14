@@ -11,7 +11,7 @@ test('update simple 1', (t) => {
   });
   expectAsQueryString(
     t,
-    qlikeQuery.meta,
+    qlikeQuery,
     "update `users` set `first_name` = 'ismail', `last_name` = 'codar'"
   );
 });
@@ -23,7 +23,7 @@ test('update returning 1', (t) => {
   }).returning('first_name');
   expectAsQueryString(
     t,
-    qlikeQuery.meta,
+    qlikeQuery,
     "update `users` set `first_name` = 'ismail', `last_name` = 'codar' returning `first_name`"
   );
 });

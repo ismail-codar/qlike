@@ -54,38 +54,38 @@ export const isConditionWhereType = <T>(
   return where[1] === 'and' || where[1] === 'or';
 };
 
-export type AllQueryMetaTypes<T> =
-  | SelectMetaType<T>
-  | InsertMetaType<T>
-  | UpdateMetaType<T>
-  | DeleteMetaType<T>;
-
 export type AllQueryTypes<T> =
   | SelectReturnType<T>
   | InsertReturnType<T>
   | UpdateReturnType<T>
   | DeleteReturnType<T>;
 
+export type AllQueryMetaTypes<T> =
+  | SelectMetaType<T>
+  | InsertMetaType<T>
+  | UpdateMetaType<T>
+  | DeleteMetaType<T>;
+
 export const isSelectQuery = <T>(
-  queryMeta: AllQueryMetaTypes<T> | any
-): queryMeta is SelectMetaType<T> => {
-  return !!queryMeta?.from;
+  query: AllQueryTypes<T> | any
+): query is SelectReturnType<T> => {
+  return !!query.meta?.from;
 };
 
 export const isInsertQuery = <T>(
-  queryMeta: AllQueryMetaTypes<T> | any
-): queryMeta is InsertMetaType<T> => {
-  return !!queryMeta?.into;
+  query: AllQueryTypes<T> | any
+): query is InsertReturnType<T> => {
+  return !!query.meta?.into;
 };
 
 export const isUpdateQuery = <T>(
-  queryMeta: AllQueryMetaTypes<T> | any
-): queryMeta is UpdateMetaType<T> => {
-  return !!queryMeta?.updateTable;
+  query: AllQueryTypes<T> | any
+): query is UpdateReturnType<T> => {
+  return !!query.meta?.updateTable;
 };
 
 export const isDeleteQuery = <T>(
-  queryMeta: AllQueryMetaTypes<T> | any
-): queryMeta is DeleteMetaType<T> => {
-  return !!queryMeta?.deleteTable;
+  query: AllQueryTypes<T> | any
+): query is DeleteReturnType<T> => {
+  return !!query.meta?.deleteTable;
 };
