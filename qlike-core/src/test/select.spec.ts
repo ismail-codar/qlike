@@ -38,6 +38,6 @@ test('where 1', (t) => {
   expectAsQueryString(
     t,
     queryMeta,
-    "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User') order by first_name desc, last_name asc"
+    "select `id` from `users` where (`first_name` = 'Test') and (`last_name` = 'User') order by `first_name` desc, `last_name` asc"
   );
 });

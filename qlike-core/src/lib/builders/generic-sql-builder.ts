@@ -70,8 +70,8 @@ export const selectQueryToString = <T>(
   if (queryMeta.orderBy) {
     str += ' order by ';
     str += Object.keys(queryMeta.orderBy)
-      .map((orderByKey) => {
-        return orderByKey + ' ' + queryMeta.orderBy[orderByKey];
+      .map((fieldName) => {
+        return fieldString(fieldName) + ' ' + queryMeta.orderBy[fieldName];
       })
       .join(', ');
   }

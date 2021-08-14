@@ -53,7 +53,14 @@ export interface ITable<T> extends ITableLike<T> {
   name: string;
 }
 
-type ValType = boolean | number | Date | string | IFieldLike<any>;
+type ValType =
+  | boolean
+  | number
+  | Date
+  | string
+  | IFieldLike<any>
+  | undefined
+  | null;
 
 export type ConditionWhereType<T> = [
   fld: AllWhereType<T>,
@@ -214,8 +221,8 @@ export const SELECT = <T>(
 };
 
 type IntoValuesType<T> =
-  | { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any }
-  | { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any }[]
+  | { [key in keyof T]?: ValType }
+  | { [key in keyof T]?: ValType }[]
   | SelectMetaType<T>;
 export type InsertMetaType<T> = {
   into: ITable<T>;
@@ -248,7 +255,7 @@ export const INSERT = <T>(into: ITable<T>, values: IntoValuesType<T>) => {
 
 export type UpdateMetaType<T> = {
   updateTable: ITable<T>;
-  set: { [key in keyof { [key in keyof T]: IFieldLike<key> }]?: any };
+  set: { [key in keyof T]?: ValType };
   where: AllWhereType<keyof T>;
   returning: (keyof T)[];
 };
@@ -261,7 +268,7 @@ export type UpdateReturnType<T> = {
 };
 export const UPDATE = <T>(
   updateTable: ITable<T>,
-  set: { [key in keyof T]?: any }
+  set: { [key in keyof T]?: ValType }
 ) => {
   const meta: UpdateMetaType<T> = {
     updateTable,

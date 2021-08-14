@@ -1,6 +1,10 @@
 import knex, { Knex } from 'knex';
 
-import { AllQueryTypes, isInsertQuery } from './lib/builders/builder-check';
+import {
+  AllQueryTypes,
+  isInsertQuery,
+  isSelectQuery,
+} from './lib/builders/builder-check';
 import { DbType, ParamType } from './lib/sqlike';
 import {
   paramsBindValues,
@@ -46,16 +50,21 @@ const execute = async (config: Knex.Config, query: AllQueryTypes<any>) => {
 export const executeOne = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
-) => {
+): Promise<T> => {
   let result = await execute(config, query);
-  if (Array.isArray(result) && result.length === 1) {
-    result = result[0];
-  } else if (
-    Array.isArray(result) &&
-    isInsertQuery(query.meta) &&
-    query.meta.returning
-  ) {
-    result = result.pop()?.pop();
+  if (Array.isArray(result)) {
+    if (result.length === 1) {
+      result = result[0];
+    } else {
+      if (isInsertQuery(query.meta) && query.meta.returning) {
+        result = result.pop()?.pop();
+      } else if (result.length > 1) {
+        throw (
+          'executeOne returns more than one result:\n' +
+          queryToString(query.meta, config.client as DbType)
+        );
+      }
+    }
   }
   return result;
 };
@@ -63,7 +72,7 @@ export const executeOne = async <T>(
 export const executeList = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
-) => {
+): Promise<T[]> => {
   let result = (await execute(config, query)) as T[];
   if (!Array.isArray(result)) {
     result = [result];
@@ -74,7 +83,7 @@ export const executeList = async <T>(
 export const executeMultiList = async <T>(
   config: Knex.Config,
   query: AllQueryTypes<T>
-) => {
+): Promise<T[][]> => {
   const result = (await execute(config, query)) as T[][];
   return result;
 };
