@@ -28,6 +28,7 @@ export const primitiveValueString = (
   field: IFieldLike<any>,
   dbType: DbType
 ) => {
+  // in query vs..
   if (isSelectQuery(val)) {
     return (
       '(' + selectQueryToString(val.meta, dbType, primitiveValueString) + ')'
@@ -65,6 +66,21 @@ export const paramValueString = (params: ParamType[]) => {
     field: IFieldLike<any>,
     dbType: DbType
   ) => {
+    // in query vs..
+    if (isSelectQuery(val)) {
+      return '(' + selectQueryToString(val.meta, dbType, valueString) + ')';
+    } else if (Array.isArray(val)) {
+      return (
+        '(' +
+        val
+          .map((item) => {
+            return valueString(item, field, dbType);
+          })
+          .join(', ') +
+        ')'
+      );
+    }
+
     params.push({
       field,
       val,

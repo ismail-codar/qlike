@@ -1,6 +1,7 @@
 import test from 'ava';
 
-import { SELECT, tableJoin } from '../lib/sqlike';
+import { ParamType, SELECT, tableJoin } from '../lib/sqlike';
+import { paramValueString } from '../utils/query-utils';
 
 import {
   accountsTable,
@@ -53,4 +54,14 @@ test('where IN keyword 1', (t) => {
     qlikeQuery,
     'select `id` from `users` where `id` in (select `id` from `users` where `id` in (1, 2))'
   );
+
+  const params: ParamType[] = [];
+  expectAsQueryString(
+    t,
+    qlikeQuery,
+    'select `id` from `users` where `id` in (select `id` from `users` where `id` in (?, ?))',
+    paramValueString(params)
+  );
+  t.is(params[0].val, 1);
+  t.is(params[1].val, 2);
 });
