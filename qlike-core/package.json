@@ -1,6 +1,6 @@
 {
   "name": "qlike-core",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "core library",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -42,8 +42,7 @@
   "engines": {
     "node": ">=10"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
