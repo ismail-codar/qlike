@@ -49,7 +49,7 @@ export const executeOne = async <T>(
 ): Promise<T> => {
   let result = await execute(config, query);
   if (Array.isArray(result)) {
-    if (result.length === 1) {
+    if (result.length <= 1) {
       result = result[0];
     } else {
       if (isInsertQuery(query.meta) && query.meta.returning) {
