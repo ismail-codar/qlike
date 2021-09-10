@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
+import fs from 'fs';
+import path from 'path';
 import commandLineArgs from 'command-line-args';
+
 import knex from 'knex';
 import schemaInspector from 'knex-schema-inspector';
 
