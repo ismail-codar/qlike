@@ -71,16 +71,7 @@ export type ConditionWhereType<T> = [
 
 export type AttributeWhereType<T> = [
   fld: T,
-  op:
-    | '<>'
-    | '<='
-    | '>='
-    | '='
-    | '<'
-    | '>'
-    | 'startsWith'
-    | 'endsWith'
-    | 'contains',
+  op: '<>' | '<=' | '>=' | '=' | '<' | '>' | 'like',
   val: ValType,
   not?: 'NOT'
 ];

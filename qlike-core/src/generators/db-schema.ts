@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import commandLineArgs from 'command-line-args';
 
+import commandLineArgs from 'command-line-args';
 import knex from 'knex';
 import schemaInspector from 'knex-schema-inspector';
 
