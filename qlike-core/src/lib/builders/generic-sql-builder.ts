@@ -21,7 +21,7 @@ import {
 
 export const selectQueryToString = <T>(
   queryMeta: SelectMetaType<T>,
-  dbType: DbType = 'sqlite3',
+  dbType: DbType,
   valueString: ValueStringFn = primitiveValueString
 ) => {
   let str = 'select';

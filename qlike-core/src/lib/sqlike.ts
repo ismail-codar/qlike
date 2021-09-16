@@ -1,4 +1,10 @@
-export type DbType = 'sqlite3' | 'pg' | 'mysql' | 'oracle' | 'sqlserver';
+export type DbType =
+  | 'sqlite3'
+  | 'pg'
+  | 'mysql'
+  | 'oracle'
+  | 'sqlserver'
+  | 'absurd-sql';
 export type FieldType =
   | 'numeric'
   | 'varchar'

@@ -106,7 +106,7 @@ export const returningString = <T>(opt: {
           .map((fieldName) => fieldString(fieldName as string))
           .join(', ');
 
-  if (dbType === 'sqlite3' && usageType === 'insert') {
+  if (usageType === 'insert') {
     str += ` ;;; SELECT ${returnFields} from \`${tableName}\` where \`${idField}\` = (select MAX(\`${idField}\`) from \`${tableName}\`)`;
   } else {
     str += ' returning ';

@@ -93,7 +93,7 @@ export const paramValueString = (params: ParamType[]) => {
 
 export const queryToString = <T>(
   query: AllQueryTypes<T>,
-  dbType: DbType = 'sqlite3',
+  dbType: DbType,
   valueString: ValueStringFn = primitiveValueString
 ) => {
   const qlikeQueryStr = isSelectQuery<T>(query)
@@ -106,11 +106,8 @@ export const queryToString = <T>(
   return qlikeQueryStr;
 };
 
-export const paramsBindValues = (
-  params: ParamType[],
-  dbType: DbType = 'sqlite3'
-) => {
-  if (dbType === 'sqlite3') {
+export const paramsBindValues = (params: ParamType[], dbType: DbType) => {
+  if (dbType === 'sqlite3' || dbType === 'absurd-sql') {
     return params.map((p) => {
       if (isNumericDataType(p.field.data_type)) {
         return Number(p.val);
