@@ -15,6 +15,10 @@ export interface DbConfig {
     values: any[]
   ) => Promise<any>;
   useNullAsDefault?: boolean;
+  generator?: {
+    serverTables?: string[];
+    clientTables?: string[];
+  };
 }
 
 const execute = async (config: DbConfig, query: AllQueryTypes<any>) => {

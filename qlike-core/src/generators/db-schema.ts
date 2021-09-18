@@ -11,6 +11,7 @@ import {
   isNumericDataType,
   isStringDataType,
 } from '../utils/query-utils';
+import { DbConfig } from '../exec';
 
 const optionDefinitions = [
   { name: 'path', alias: 'p', type: String },
@@ -24,10 +25,14 @@ if (!options.path) {
   //   options.minimal = true;
 }
 console.log(options);
+if (!options.path.endsWith('.json')) {
+  throw '--path must be a json file';
+}
 
 const dbFilePath = path.resolve(__dirname, '../../', options.path);
 // @typescript-eslint/no-var-requires
-const database = knex(require(dbFilePath));
+const dbConfig = require(dbFilePath) as DbConfig;
+const database = knex(dbConfig);
 const inspector = schemaInspector(database);
 
 const getSchema = async (): Promise<ITable<any>[]> => {
@@ -62,9 +67,8 @@ const typeName = (data_type: FieldType) => {
   return data_type;
 };
 
-getSchema().then((schema) => {
-  const tableCodes = [qlikeImportStr];
-  schema.forEach((table) => {
+const generateTables = (tables: ITable<any>[], tableCodes: string[]) => {
+  tables.forEach((table) => {
     const tableKey = table.name;
     const tableName =
       tableKey.substr(0, 1).toUpperCase() + snakeToCamel(tableKey.substr(1));
@@ -102,9 +106,41 @@ export const ${
 };`;
     tableCodes.push(tableCode);
   });
+};
 
-  const tsFilePath = dbFilePath.substr(0, dbFilePath.length - 5) + '-schema.ts';
-  fs.writeFileSync(tsFilePath, tableCodes.join('\n'));
+getSchema().then((schema) => {
+  let serverTables = schema.slice(0);
+  let clientTables = [];
+  let serverCodes = [qlikeImportStr];
+  if (dbConfig.generator) {
+    if (dbConfig.generator.serverTables) {
+      serverTables = schema
+        .slice(0)
+        .filter((tbl) => dbConfig.generator.serverTables.includes(tbl.name));
+    }
+    if (dbConfig.generator.clientTables) {
+      clientTables = schema
+        .slice(0)
+        .filter((tbl) => dbConfig.generator.clientTables.includes(tbl.name));
+    }
+  }
+  generateTables(serverTables, serverCodes);
+  const serverTsFilePath =
+    dbFilePath.substr(0, dbFilePath.length - 5) + '-server-schema.ts';
+  console.log(serverTsFilePath);
+  fs.writeFileSync(serverTsFilePath, serverCodes.join('\n'));
 
+  const clientTsFilePath =
+    dbFilePath.substr(0, dbFilePath.length - 5) + '-client-schema.ts';
+  if (clientTables.length) {
+    const clientCodes = [qlikeImportStr];
+    generateTables(clientTables, clientCodes);
+    console.log(clientTsFilePath);
+    fs.writeFileSync(clientTsFilePath, clientCodes.join('\n'));
+  } else {
+    if (fs.existsSync(clientTsFilePath)) {
+      fs.unlinkSync(clientTsFilePath);
+    }
+  }
   process.exit();
 });
