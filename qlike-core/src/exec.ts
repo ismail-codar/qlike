@@ -9,11 +9,13 @@ import {
 export interface DbConfig {
   client: DbType;
   connection: any;
-  execute: (
-    config: Omit<DbConfig, 'execute'>,
-    queryStr: string,
-    values: any[]
-  ) => Promise<any>;
+  execute:
+    | undefined
+    | ((
+        config: Omit<DbConfig, 'execute'>,
+        queryStr: string,
+        values: any[]
+      ) => Promise<any>);
   useNullAsDefault?: boolean;
   generator?: {
     serverTables?: string[];
@@ -85,3 +87,5 @@ export const executeMultiList = async <T>(
   const result = (await execute(config, query)) as T[][];
   return result;
 };
+
+// TODO executeExists
