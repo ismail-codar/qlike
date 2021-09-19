@@ -36,23 +36,39 @@ export const executeAbsurdSql = async (
   isDev && console.log(queryStr, values);
   const db = config.connection.db;
   const isSelect = queryStr.startsWith('select');
+  const isTransactional =
+    queryStr.startsWith('insert') ||
+    queryStr.startsWith('update') ||
+    queryStr.startsWith('delete');
   // TODO transactions
   let result = null;
   if (values && values.length) {
-    !isSelect && db.exec('BEGIN TRANSACTION');
+    isTransactional && db.exec('BEGIN TRANSACTION');
     let stmt = db.prepare(queryStr);
-    stmt.run(values);
-    isSelect && stmt.step();
-    result = stmt.getAsObject();
+    try {
+      if (isSelect) {
+        result = [stmt.getAsObject(values)];
+        if (Object.values(result[0]).filter((item) => item).length === 0) {
+          result = [];
+        }
+        while (stmt.step()) {
+          result.push(stmt.getAsObject());
+        }
+      } else {
+        stmt.run(values);
+      }
+    } catch (error) {
+      debugger;
+      console.error('executeAbsurdSql error->', error);
+    }
     stmt.free();
-    !isSelect && db.exec('COMMIT');
+    isTransactional && db.exec('COMMIT');
   } else {
     result = db.exec(queryStr);
   }
 
-  debugger;
-  console.log('executeAbsurdSql result -> ', result);
-  if (!Array.isArray(result)) {
+  isDev && console.log('executeAbsurdSql result -> ', result);
+  if (isSelect || !Array.isArray(result)) {
     return result;
   } else {
     return result.map((res) => {

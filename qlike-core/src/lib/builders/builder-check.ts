@@ -69,23 +69,23 @@ export type AllQueryMetaTypes<T> =
 export const isSelectQuery = <T>(
   query: AllQueryTypes<T> | any
 ): query is SelectReturnType<T> => {
-  return !!query.meta?.from;
+  return !!query?.meta?.from;
 };
 
 export const isInsertQuery = <T>(
   query: AllQueryTypes<T> | any
 ): query is InsertReturnType<T> => {
-  return !!query.meta?.into;
+  return !!query?.meta?.into;
 };
 
 export const isUpdateQuery = <T>(
   query: AllQueryTypes<T> | any
 ): query is UpdateReturnType<T> => {
-  return !!query.meta?.updateTable;
+  return !!query?.meta?.updateTable;
 };
 
 export const isDeleteQuery = <T>(
   query: AllQueryTypes<T> | any
 ): query is DeleteReturnType<T> => {
-  return !!query.meta?.deleteTable;
+  return !!query?.meta?.deleteTable;
 };
