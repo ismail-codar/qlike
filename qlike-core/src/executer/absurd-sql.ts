@@ -56,30 +56,34 @@ export const executeAbsurdSql = async (
         }
       } else {
         stmt.run(values);
+        stmt.step();
+        result = stmt.getAsObject();
       }
     } catch (error) {
-      debugger;
       console.error('executeAbsurdSql error->', error);
+      debugger;
     }
     stmt.free();
     isTransactional && db.exec('COMMIT');
-  } else {
-    result = db.exec(queryStr);
-  }
-
-  isDev && console.log('executeAbsurdSql result -> ', result);
-  if (isSelect || !Array.isArray(result)) {
     return result;
   } else {
-    return result.map((res) => {
-      const columns = res.columns;
-      return res.values.map((value) => {
-        const obj = {};
-        for (var i = 0; i < value.length; i++) {
-          obj[columns[i]] = value[i];
-        }
-        return obj;
+    let execResult = db.exec(queryStr);
+    if (Array.isArray(execResult)) {
+      execResult = execResult.map((res) => {
+        const columns = res.columns;
+        return res.values.map((value) => {
+          const obj = {};
+          for (var i = 0; i < value.length; i++) {
+            obj[columns[i]] = value[i];
+          }
+          return obj;
+        });
       });
-    });
+    }
+    result = [];
+    for (var i = 0; i < execResult.length; i++) {
+      result.push.apply(result, execResult[i]);
+    }
+    return result;
   }
 };
