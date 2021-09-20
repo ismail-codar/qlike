@@ -75,6 +75,12 @@ export const selectQueryToString = <T>(
       })
       .join(', ');
   }
+  if (queryMeta.limit) {
+    str += ' limit ';
+    str += queryMeta.limit[0];
+    str += ', ';
+    str += queryMeta.limit[1];
+  }
 
   return str;
 };
